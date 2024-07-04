@@ -19,9 +19,11 @@ Vulkan::Window::Window(int w, int h, const Log::ILogger &logger) : width{w}, hei
     swapChain = new SwapChain{*logicalDevice, *surface, window, logger};
     renderPass = new RenderPass{*swapChain, *logicalDevice};
     graphicsPipeline = new GraphicsPipeline{*logicalDevice, *swapChain, *renderPass};
+    frameBuffer = new FrameBuffer{ *swapChain, *renderPass, *logicalDevice };
 }
 
 Vulkan::Window::~Window() {
+    delete frameBuffer;
     delete graphicsPipeline;
     delete renderPass;
     delete swapChain;

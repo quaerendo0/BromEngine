@@ -36,12 +36,15 @@ namespace Vulkan {
 
         [[nodiscard]] const VkFormat &getSwapChainImageFormat() const noexcept { return swapChainImageFormat; }
 
+        [[nodiscard]] const std::vector<VkImageView>& getSwapChainImageViews() const noexcept { return swapChainImageViews; }
+
     private:
         VkSwapchainKHR swapChain;
         const LogicalDevice &logicalDevice;
 
         std::vector<VkImage> swapChainImages;
         std::vector<VkImageView> swapChainImageViews;
+
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
 

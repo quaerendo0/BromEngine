@@ -8,6 +8,7 @@
 #include "Debug.h"
 #include "RenderPass.h"
 #include "GraphicsPipeline.h"
+#include "FrameBuffer.h"
 
 #pragma once
 
@@ -40,5 +41,6 @@ namespace Vulkan {
         SwapChain *swapChain = nullptr;
         RenderPass *renderPass = nullptr;
         GraphicsPipeline *graphicsPipeline = nullptr;
+        FrameBuffer* frameBuffer = nullptr;
     };
 }
