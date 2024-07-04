@@ -1,9 +1,10 @@
 #include "FrameBuffer.h"
 
-inline Vulkan::FrameBuffer::FrameBuffer(const SwapChain& swapchain, const RenderPass& renderPass, const LogicalDevice& device)
+Vulkan::FrameBuffer::FrameBuffer(const SwapChain& swapchain, const RenderPass& renderPass, const LogicalDevice& device)
+    : device{device}
 {
-    const auto swapChainImageViews = swapchain.getSwapChainImageViews();
-    const auto swapChainExtent = swapchain.getSwapChainExtent();
+    const auto &swapChainImageViews = swapchain.getSwapChainImageViews();
+    const auto &swapChainExtent = swapchain.getSwapChainExtent();
 
     swapChainFramebuffers.resize(swapChainImageViews.size());
 
@@ -27,7 +28,7 @@ inline Vulkan::FrameBuffer::FrameBuffer(const SwapChain& swapchain, const Render
     }
 }
 
-inline Vulkan::FrameBuffer::~FrameBuffer() {
+Vulkan::FrameBuffer::~FrameBuffer() {
     for (auto framebuffer : swapChainFramebuffers) {
         vkDestroyFramebuffer(device.getDevicePtr(), framebuffer, nullptr);
     }

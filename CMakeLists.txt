@@ -37,7 +37,11 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/RenderPass.cpp
         Vulkan/RenderPass.h
         Vulkan/FrameBuffer.cpp
-        Vulkan/FrameBuffer.h)
+        Vulkan/FrameBuffer.h
+        Vulkan/CommandManager.cpp
+        Vulkan/CommandManager.h 
+        tutorialImpl.h
+)
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
