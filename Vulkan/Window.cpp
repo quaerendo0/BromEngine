@@ -27,7 +27,7 @@ Vulkan::Window::Window(int w, int h, const Log::ILogger &logger) : width{w}, hei
 Vulkan::Window::~Window() {
     delete frameManager;
     delete commandManager;
-    delete frameBuffer;
+    delete frameBuffer; // swapchain clean framebuffer?
     delete graphicsPipeline;
     delete renderPass;
     delete swapChain;
@@ -50,3 +50,6 @@ void Vulkan::Window::drawFrame() {
     frameManager->drawFrame();
 }
 
+void Vulkan::Window::waitIdle() {
+    vkDeviceWaitIdle(logicalDevice->getDevicePtr());
+}
