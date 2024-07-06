@@ -19,6 +19,9 @@ namespace Vulkan {
 
         [[nodiscard]] const PhysicalDevice &getParentPhysicalDevice() const noexcept { return physicalDevice; }
 
+        [[nodiscard]] const Queue& getGraphicsQueue() const noexcept { return *graphicsQueue; }
+        [[nodiscard]] const Queue& getPresentQueue() const noexcept { return *presentQueue; }
+
     private:
         VkDevice device = nullptr;
         const PhysicalDevice &physicalDevice;

@@ -8,6 +8,9 @@
 #include "Debug.h"
 #include "RenderPass.h"
 #include "GraphicsPipeline.h"
+#include "FrameBuffer.h"
+#include "CommandManager.h"
+#include "FrameManager.h"
 
 #pragma once
 
@@ -20,7 +23,8 @@ namespace Vulkan {
 
         bool shouldClose();
 
-        static void pollEvents();
+        void pollEvents();
+        void drawFrame();
 
     private:
         int width = 800;
@@ -40,5 +44,8 @@ namespace Vulkan {
         SwapChain *swapChain = nullptr;
         RenderPass *renderPass = nullptr;
         GraphicsPipeline *graphicsPipeline = nullptr;
+        FrameBuffer* frameBuffer = nullptr;
+        CommandManager* commandManager = nullptr;
+        FrameManager* frameManager = nullptr;
     };
 }

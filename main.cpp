@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <optional>
 #include "App.h"
+#include "tutorialImpl.h"
 
 int main() {
     BromEngine::App app;
