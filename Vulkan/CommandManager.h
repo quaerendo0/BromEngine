@@ -20,7 +20,9 @@ namespace Vulkan {
 		~CommandManager();
 
 		void initCommandBuffer(uint32_t imageIndex);
-		void resetCommandBuffer();
+		void resetCommandBuffer() const;
+
+		const VkCommandBuffer& getCommandBuffer() const { return commandBuffer; }
 
 	private:
 
@@ -29,7 +31,7 @@ namespace Vulkan {
 		void startRenderPass(uint32_t imageIndex);
 		void setupAndInsertCommand();
 		void stopRenderPass() const;
-		void stopRecordingCommands();
+		void stopRecordingCommands() const;
 
 		VkCommandPool commandPool;
 		VkCommandBuffer commandBuffer;

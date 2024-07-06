@@ -38,6 +38,8 @@ namespace Vulkan {
 
         [[nodiscard]] const std::vector<VkImageView>& getSwapChainImageViews() const noexcept { return swapChainImageViews; }
 
+        [[nodiscard]] const VkSwapchainKHR& getSwapChain() const noexcept { return swapChain; }
+
     private:
         VkSwapchainKHR swapChain;
         const LogicalDevice &logicalDevice;

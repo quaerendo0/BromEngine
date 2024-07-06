@@ -20,9 +20,13 @@ Vulkan::Window::Window(int w, int h, const Log::ILogger &logger) : width{w}, hei
     renderPass = new RenderPass{*swapChain, *logicalDevice};
     graphicsPipeline = new GraphicsPipeline{*logicalDevice, *swapChain, *renderPass};
     frameBuffer = new FrameBuffer{ *swapChain, *renderPass, *logicalDevice };
+    commandManager = new CommandManager{ *logicalDevice, *renderPass, *frameBuffer, *swapChain, *graphicsPipeline };
+    frameManager = new FrameManager{ *logicalDevice, *swapChain, *commandManager };
 }
 
 Vulkan::Window::~Window() {
+    delete frameManager;
+    delete commandManager;
     delete frameBuffer;
     delete graphicsPipeline;
     delete renderPass;
@@ -41,3 +45,8 @@ bool Vulkan::Window::shouldClose() { return glfwWindowShouldClose(window); }
 void Vulkan::Window::pollEvents() {
     glfwPollEvents();
 }
+
+void Vulkan::Window::drawFrame() {
+    frameManager->drawFrame();
+}
+

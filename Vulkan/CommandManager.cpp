@@ -90,7 +90,7 @@ void Vulkan::CommandManager::stopRenderPass() const {
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void Vulkan::CommandManager::stopRecordingCommands() {
+void Vulkan::CommandManager::stopRecordingCommands() const {
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
 	}

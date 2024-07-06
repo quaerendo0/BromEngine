@@ -5,8 +5,6 @@
 #include "tutorialImpl.h"
 
 int main() {
-    return mainLoop();
-    /*
     BromEngine::App app;
 
     try {
@@ -17,5 +15,4 @@ int main() {
     }
 
     return EXIT_SUCCESS;
-    */
 }
