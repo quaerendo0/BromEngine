@@ -25,6 +25,7 @@ namespace Vulkan {
 
         void pollEvents();
         void drawFrame();
+        void waitIdle();
 
     private:
         int width = 800;

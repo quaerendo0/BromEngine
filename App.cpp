@@ -6,5 +6,7 @@ namespace BromEngine {
             window.pollEvents();
             window.drawFrame();
         }
+
+        window.waitIdle();
     }
 }
