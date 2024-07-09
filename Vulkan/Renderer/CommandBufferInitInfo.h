@@ -16,6 +16,6 @@ namespace Vulkan {
         const FrameBuffer &frameBuffer;
         const GraphicsPipeline &pipeline;
         const SwapChain &swapChain;
-        std::vector<Command> commands;
+        std::vector<DrawCommand> commands;
     };
 }

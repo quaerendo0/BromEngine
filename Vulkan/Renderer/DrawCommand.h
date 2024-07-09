@@ -4,9 +4,9 @@ namespace Vulkan {
 
 	class CommandBuffer;
 
-	class Command {
+	class DrawCommand {
 	public:
-		Command(CommandBuffer& buffer);
+		DrawCommand(CommandBuffer& buffer);
 		void execute() const;
 	private:
 		CommandBuffer& buffer;

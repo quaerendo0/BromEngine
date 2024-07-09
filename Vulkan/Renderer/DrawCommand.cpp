@@ -4,11 +4,11 @@
 
 #include "CommandBuffer.h"
 
-Vulkan::Command::Command(CommandBuffer &buffer) : buffer{buffer}
+Vulkan::DrawCommand::DrawCommand(CommandBuffer &buffer) : buffer{buffer}
 {
 }
 
-void Vulkan::Command::execute() const
+void Vulkan::DrawCommand::execute() const
 {
     vkCmdDraw(buffer.getBuffer(), 3, 1, 0, 0);
 }

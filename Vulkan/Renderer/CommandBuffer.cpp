@@ -87,7 +87,7 @@ namespace Vulkan {
         startRenderPass(info.imageIndex, info.renderPass, info.frameBuffer, info.swapChain.getSwapChainExtent());
         bindCommandBufferToPipeline(info.pipeline);
         setupViewportScissor(info.swapChain.getSwapChainExtent());
-        for (const Command& command : info.commands) {
+        for (const DrawCommand& command : info.commands) {
             command.execute();
         }
         stopRenderPass();
