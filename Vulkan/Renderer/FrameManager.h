@@ -3,12 +3,18 @@
 #include "vulkan/vulkan.h"
 #include "../LogicalDevice.h"
 #include "SwapChain.h"
-#include "CommandManager.h"
+#include "CommandPool.h"
+#include "CommandBuffer.h"
 
 namespace Vulkan {
 	class FrameManager {
 	public:
-		FrameManager(const LogicalDevice& logicalDevice, const SwapChain& swapChain, CommandManager& commandManager);
+		FrameManager(
+			const LogicalDevice& device,
+			const RenderPass& renderPass,
+			const FrameBuffer& frameBuffer,
+			const SwapChain& swapChain,
+			const GraphicsPipeline& graphicsPipeline);
 		~FrameManager();
 
 		void drawFrame();
@@ -18,8 +24,14 @@ namespace Vulkan {
 		VkSemaphore renderFinishedSemaphore;
 		VkFence inFlightFence; // fence - makes CPU wait for GPU
 
-		const LogicalDevice& logicalDevice;
+
+		const LogicalDevice& device;
+		const RenderPass& renderPass;
+		const FrameBuffer& frameBuffer;
 		const SwapChain& swapChain;
-		CommandManager& commandManager;
+		const GraphicsPipeline& graphicsPipeline;
+
+		CommandPool* commandPool;
+		CommandBuffer* commandBuffer;
 	};
 }

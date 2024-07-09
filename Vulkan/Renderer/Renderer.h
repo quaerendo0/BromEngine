@@ -1,10 +1,11 @@
+#pragma once
+
 #include "../LogicalDevice.h"
 
 #include "SwapChain.h"
 #include "RenderPass.h"
 #include "GraphicsPipeline.h"
 #include "FrameBuffer.h"
-#include "CommandManager.h"
 #include "FrameManager.h"
 
 namespace Vulkan {
@@ -22,7 +23,6 @@ namespace Vulkan {
         RenderPass *renderPass = nullptr;
         GraphicsPipeline *graphicsPipeline = nullptr;
         FrameBuffer* frameBuffer = nullptr;
-        CommandManager* commandManager = nullptr;
         FrameManager* frameManager = nullptr;
     };
 

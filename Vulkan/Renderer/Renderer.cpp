@@ -9,14 +9,12 @@ namespace Vulkan {
         renderPass = new RenderPass{*swapChain, device};
         graphicsPipeline = new GraphicsPipeline{device, *swapChain, *renderPass};
         frameBuffer = new FrameBuffer{ *swapChain, *renderPass, device };
-        commandManager = new CommandManager{ device, *renderPass, *frameBuffer, *swapChain, *graphicsPipeline };
-        frameManager = new FrameManager{ device, *swapChain, *commandManager };
+        frameManager = new FrameManager{ device, *renderPass, *frameBuffer, *swapChain, *graphicsPipeline };
     }
 
     Renderer::~Renderer()
     {
         delete frameManager;
-        delete commandManager;
         delete frameBuffer; // swapchain clean framebuffer?
         delete graphicsPipeline;
         delete renderPass;

@@ -30,8 +30,11 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Window.cpp
         Vulkan/Window.h
 
-        Vulkan/Renderer/CommandManager.cpp
-        Vulkan/Renderer/CommandManager.h
+        Vulkan/Renderer/CommandBuffer.cpp
+        Vulkan/Renderer/CommandBuffer.h
+        Vulkan/Renderer/CommandBufferInitInfo.h
+        Vulkan/Renderer/CommandPool.cpp
+        Vulkan/Renderer/CommandPool.h
         Vulkan/Renderer/FrameBuffer.cpp
         Vulkan/Renderer/FrameBuffer.h
         Vulkan/Renderer/FrameManager.cpp
@@ -44,7 +47,8 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Renderer/RenderPass.h
         Vulkan/Renderer/SwapChain.cpp
         Vulkan/Renderer/SwapChain.h
-)
+        Vulkan/Renderer/DrawCommand.h
+        Vulkan/Renderer/DrawCommand.cpp)
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
