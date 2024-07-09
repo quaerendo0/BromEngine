@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "SwapChain.h"
 
 namespace Vulkan {

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "vulkan/vulkan.h"
-#include "LogicalDevice.h"
 #include <stdexcept>
+
+#include "vulkan/vulkan.h"
+
+#include "../LogicalDevice.h"
 #include "RenderPass.h"
 #include "FrameBuffer.h"
 #include "GraphicsPipeline.h"

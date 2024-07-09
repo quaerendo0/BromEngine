@@ -1,11 +1,12 @@
 #pragma once
 
 #include <vulkan/vulkan_core.h>
-#include "SwapChainSupportDetails.h"
 #include "GLFW/glfw3.h"
-#include "PhysicalDevice.h"
-#include "Surface.h"
-#include "LogicalDevice.h"
+
+#include "../PhysicalDevice.h"
+#include "../Surface.h"
+#include "../LogicalDevice.h"
+#include "../SwapChainSupportDetails.h"
 
 namespace Vulkan {
     class SwapChain {
@@ -14,9 +15,6 @@ namespace Vulkan {
                   const Log::ILogger &logger);
 
         ~SwapChain();
-
-        static SwapChainSupportDetails
-        querySwapChainSupport(const VkPhysicalDevice &device, const VkSurfaceKHR &surface);
 
         // Pich suitable surface format, preferred SRGB alpha, otherwise first that is available.
         // Surface format - what color scheme (RGB/SRGB) and how many bits are used for color

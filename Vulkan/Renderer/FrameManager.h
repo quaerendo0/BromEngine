@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vulkan/vulkan.h"
-#include "LogicalDevice.h"
+#include "../LogicalDevice.h"
 #include "SwapChain.h"
 #include "CommandManager.h"
 

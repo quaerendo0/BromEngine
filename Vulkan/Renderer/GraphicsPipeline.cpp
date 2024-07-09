@@ -43,8 +43,8 @@ namespace Vulkan {
 
     std::vector<VkPipelineShaderStageCreateInfo> createShaderStages(VkDevice device){
 
-        auto vertShaderCode = readFile("./Shaders/vert.spv");
-        auto fragShaderCode = readFile("./Shaders/frag.spv");
+        auto vertShaderCode = readFile("./vert.spv");
+        auto fragShaderCode = readFile("./frag.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode, device);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode, device);

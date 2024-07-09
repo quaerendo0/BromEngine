@@ -1,9 +1,8 @@
 #include <stdexcept>
 #include <vector>
 #include <set>
+
 #include "PhysicalDevice.h"
-#include "SwapChainSupportDetails.h"
-#include "SwapChain.h"
 
 namespace Vulkan {
     const std::vector<const char *> PhysicalDevice::deviceExtensions = {
@@ -69,6 +68,34 @@ namespace Vulkan {
         return indices;
     }
 
+    SwapChainSupportDetails getSwapChainSupportImpl(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface) {
+        SwapChainSupportDetails details;
+
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &details.capabilities);
+
+        uint32_t formatCount;
+        vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, nullptr);
+        if (formatCount != 0) {
+            details.formats.resize(formatCount);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, details.formats.data());
+        }
+
+        uint32_t presentModeCount;
+        vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
+
+        if (presentModeCount != 0) {
+            details.presentModes.resize(presentModeCount);
+            vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, details.presentModes.data());
+        }
+
+        return details;
+    }
+
+    SwapChainSupportDetails PhysicalDevice::getSwapChainSupport() {
+        SwapChainSupportDetails details;
+        return getSwapChainSupportImpl(physicalDevice, referenceSurface);
+    }
+
     bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface) {
         VkPhysicalDeviceProperties deviceProperties;
         VkPhysicalDeviceFeatures deviceFeatures;
@@ -84,7 +111,7 @@ namespace Vulkan {
 
         bool swapChainAdequate = false;
         if (extensionsSupported) {
-            SwapChainSupportDetails swapChainSupport = SwapChain::querySwapChainSupport(device, surface);
+            SwapChainSupportDetails swapChainSupport = getSwapChainSupportImpl(device, surface);
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
         suitable = suitable && familyIndices.supportsAllFamilies() && extensionsSupported && swapChainAdequate;
