@@ -12,9 +12,13 @@ namespace Vulkan {
         frameBuffer = new FrameBuffer{ *swapChain, *renderPass, device };
 
         const std::vector<Vertex> vertices = {
-            {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+            {{0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
             {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+
+            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{-0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
         };
 
         vertexBuffer = new VertexBuffer{device, vertices};
@@ -88,7 +92,7 @@ namespace Vulkan {
             *frameBuffer,
             *graphicsPipeline,
             *swapChain,
-            { DrawCommand{ commandBuffer } },
+            { DrawCommand{ commandBuffer, vertexBuffer->size() } },
             *vertexBuffer
         };
         commandBuffer.recordCommandBuffer(info);

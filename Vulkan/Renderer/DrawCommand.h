@@ -6,9 +6,10 @@ namespace Vulkan {
 
 	class DrawCommand {
 	public:
-		DrawCommand(CommandBuffer& buffer);
+		DrawCommand(CommandBuffer& buffer, uint32_t vertexCount);
 		void execute() const;
 	private:
+		uint32_t vertexCount;
 		CommandBuffer& buffer;
 	};
 }
