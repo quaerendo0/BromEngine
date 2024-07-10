@@ -14,7 +14,7 @@ namespace Vulkan {
         CommandBuffer(const LogicalDevice &device, const CommandPool &commandPool);
         ~CommandBuffer();
 
-		void recordCommandBuffer(const CommandBufferInitInfo& info, const VertexBuffer& vertexBuffer);
+		void recordCommandBuffer(const CommandBufferInitInfo& info);
 		void resetCommandBuffer() const;
 
         const VkCommandBuffer &getBuffer() const noexcept { return commandBuffer; }

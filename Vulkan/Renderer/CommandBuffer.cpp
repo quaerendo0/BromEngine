@@ -88,12 +88,13 @@ namespace Vulkan {
         }
     }
 
-    void CommandBuffer::recordCommandBuffer(const CommandBufferInitInfo& info, const VertexBuffer& vertexBuffer)
+    void CommandBuffer::recordCommandBuffer(const CommandBufferInitInfo& info)
     {
         beginRecordingCommands();
         startRenderPass(info.imageIndex, info.renderPass, info.frameBuffer, info.swapChain.getSwapChainExtent());
         bindCommandBufferToPipeline(info.pipeline);
         setupViewportScissor(info.swapChain.getSwapChainExtent());
+        bindVertexBuffer(info.vertexBuffer);
         for (const DrawCommand& command : info.commands) {
             command.execute();
         }

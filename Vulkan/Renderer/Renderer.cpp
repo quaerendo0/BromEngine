@@ -88,9 +88,10 @@ namespace Vulkan {
             *frameBuffer,
             *graphicsPipeline,
             *swapChain,
-            { DrawCommand{ commandBuffer } }
+            { DrawCommand{ commandBuffer } },
+            *vertexBuffer
         };
-        commandBuffer.recordCommandBuffer(info, *vertexBuffer);
+        commandBuffer.recordCommandBuffer(info);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

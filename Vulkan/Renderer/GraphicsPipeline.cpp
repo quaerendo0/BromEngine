@@ -87,19 +87,25 @@ namespace Vulkan {
         return config;
     }
 
-    VkPipelineVertexInputStateCreateInfo createVertexInputInfo() {
+    struct VertexConfig {
+        VkVertexInputBindingDescription bindingDescription{};
+        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    };
 
-        auto bindingDescription = Vertex::getBindingDescription();
-        auto attributeDescriptions = Vertex::getAttributeDescriptions();
+    VertexConfig createVertexConfig() {
+        VertexConfig vertexConfig{};
 
-        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vertexInputInfo.vertexBindingDescriptionCount = 1;
-        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+        vertexConfig.bindingDescription = Vertex::getBindingDescription();
+        vertexConfig.attributeDescriptions = Vertex::getAttributeDescriptions();
 
-        return vertexInputInfo;
+        vertexConfig.vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexConfig.vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexConfig.vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexConfig.attributeDescriptions.size());
+        vertexConfig.vertexInputInfo.pVertexBindingDescriptions = &vertexConfig.bindingDescription;
+        vertexConfig.vertexInputInfo.pVertexAttributeDescriptions = vertexConfig.attributeDescriptions.data();
+
+        return vertexConfig;
     }
 
     VkPipelineInputAssemblyStateCreateInfo getInputAssemblyConfig() {
@@ -218,7 +224,7 @@ namespace Vulkan {
 
         const auto shaderStages = createShaderStages(device);
         const auto dynamicState = createDynamicState();
-        const auto vertexInputInfo = createVertexInputInfo();
+        const auto vertexInputInfo = createVertexConfig().vertexInputInfo;
         const auto inputAssembly = getInputAssemblyConfig();
         const auto viewportState = getViewportConfig(swapChainExtent);
         const auto rasterizer = getRasterizerConfig();

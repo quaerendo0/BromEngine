@@ -7,6 +7,7 @@
 #include "GraphicsPipeline.h"
 #include "SwapChain.h"
 #include "DrawCommand.h"
+#include "VertexBuffer.h"
 
 namespace Vulkan {
 
@@ -17,5 +18,6 @@ namespace Vulkan {
         const GraphicsPipeline &pipeline;
         const SwapChain &swapChain;
         std::vector<DrawCommand> commands;
+        const VertexBuffer& vertexBuffer;
     };
 }
