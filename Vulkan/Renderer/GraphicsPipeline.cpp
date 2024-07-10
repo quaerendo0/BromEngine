@@ -1,4 +1,3 @@
-#include <vulkan/vulkan_core.h>
 #include "GraphicsPipeline.h"
 
 namespace Vulkan {
@@ -112,17 +111,17 @@ namespace Vulkan {
         VkPipelineViewportStateCreateInfo viewportState{};
     };
 
-    ViewportConfig getViewportConfig(const SwapChain& swapChain) {
+    ViewportConfig getViewportConfig(const VkExtent2D extent) {
         ViewportConfig viewportConfig{};
         viewportConfig.viewport.x = 0.0f;
         viewportConfig.viewport.y = 0.0f;
-        viewportConfig.viewport.width = (float)swapChain.getSwapChainExtent().width;
-        viewportConfig.viewport.height = (float)swapChain.getSwapChainExtent().height;
+        viewportConfig.viewport.width = (float)extent.width;
+        viewportConfig.viewport.height = (float)extent.height;
         viewportConfig.viewport.minDepth = 0.0f;
         viewportConfig.viewport.maxDepth = 1.0f;
 
         viewportConfig.scissor.offset = { 0, 0 };
-        viewportConfig.scissor.extent = swapChain.getSwapChainExtent();
+        viewportConfig.scissor.extent = extent;
 
         viewportConfig.viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
         viewportConfig.viewportState.viewportCount = 1;
@@ -206,7 +205,7 @@ namespace Vulkan {
         return pipelineLayoutInfo;
     }
 
-    GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice, const SwapChain &swapChain,
+    GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice, const VkExtent2D swapChainExtent,
                                        const RenderPass &renderPass)
             : logicalDevice{logicalDevice} {
         const auto device = logicalDevice.getDevicePtr();
@@ -215,7 +214,7 @@ namespace Vulkan {
         const auto dynamicState = createDynamicState();
         const auto vertexInputInfo = createVertexInputInfo();
         const auto inputAssembly = getInputAssemblyConfig();
-        const auto viewportState = getViewportConfig(swapChain);
+        const auto viewportState = getViewportConfig(swapChainExtent);
         const auto rasterizer = getRasterizerConfig();
         const auto multisampling = getMultisamplingConfig();
         const auto colorBlending = getColorBlendingConfig();

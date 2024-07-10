@@ -5,7 +5,7 @@
 namespace Vulkan {
     class RenderPass {
     public:
-        RenderPass(const SwapChain &swapChain, const LogicalDevice &logicalDevice);
+        RenderPass(const VkFormat swapChainImageFormat, const LogicalDevice &logicalDevice);
 
         ~RenderPass();
 
