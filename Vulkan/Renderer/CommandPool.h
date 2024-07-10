@@ -16,9 +16,6 @@ namespace Vulkan {
 
 		~CommandPool();
 
-		void initCommandBuffer(uint32_t imageIndex);
-		void resetCommandBuffer() const;
-
 		const VkCommandPool& getCommandPool() const { return commandPool; }
 
 	private:

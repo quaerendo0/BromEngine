@@ -46,7 +46,12 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Renderer/SwapChain.cpp
         Vulkan/Renderer/SwapChain.h
         Vulkan/Renderer/DrawCommand.h
-        Vulkan/Renderer/DrawCommand.cpp)
+        Vulkan/Renderer/DrawCommand.cpp
+        Vulkan/Renderer/VertexBuffer.h
+        Vulkan/Renderer/VertexBuffer.cpp
+
+        Vulkan/Geometry/Vertex.h
+)
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan)
