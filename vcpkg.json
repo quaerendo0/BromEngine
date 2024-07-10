@@ -1,5 +1,5 @@
 {
-  "name": "vulkan-tutorial-manifest",
+  "name": "brom-engine-manifest",
   "version": "0.1.0",
   "dependencies": [
     "glfw3",

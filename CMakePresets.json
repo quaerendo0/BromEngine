@@ -2,17 +2,17 @@
   "version": 2,
   "configurePresets": [
     {
-      "name": "vulkan-tutorial",
-      "displayName": "Vulkan Tutorial Windows x64 Debug",
+      "name": "brom-engine",
+      "displayName": "BromEngine Windows x64 Debug",
       "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/${presetName}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/${presetName}/install/",
         "CMAKE_TOOLCHAIN_FILE": {
-			"value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-			"type": "FILEPATH"
-		}
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "type": "FILEPATH"
+        }
       }
     }
   ]
