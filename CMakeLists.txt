@@ -37,8 +37,6 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Renderer/CommandPool.h
         Vulkan/Renderer/FrameBuffer.cpp
         Vulkan/Renderer/FrameBuffer.h
-        Vulkan/Renderer/FrameManager.cpp
-        Vulkan/Renderer/FrameManager.h
         Vulkan/Renderer/GraphicsPipeline.cpp
         Vulkan/Renderer/GraphicsPipeline.h
         Vulkan/Renderer/Renderer.cpp

@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <vulkan/vulkan_core.h>
 #include "../LogicalDevice.h"
 #include "SwapChain.h"
 #include "RenderPass.h"
@@ -11,7 +12,7 @@ namespace Vulkan {
 
     class GraphicsPipeline {
     public:
-        GraphicsPipeline(const LogicalDevice &logicalDevice, const SwapChain &swapChain, const RenderPass &renderPass);
+        GraphicsPipeline(const LogicalDevice &logicalDevice, const VkExtent2D swapChainExtent, const RenderPass &renderPass);
         ~GraphicsPipeline();
 
         const VkPipeline& getPipeline() const noexcept { return graphicsPipeline;  }
