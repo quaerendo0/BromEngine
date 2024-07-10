@@ -1,5 +1,10 @@
 #include "Window.h"
 
+static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+    auto windowPtr = reinterpret_cast<Vulkan::Window*>(glfwGetWindowUserPointer(window));
+    windowPtr->handleResize();
+}
+
 void Vulkan::Window::initWindow(int w, int h) {
     glfwInit();
 
@@ -7,6 +12,8 @@ void Vulkan::Window::initWindow(int w, int h) {
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
     window = glfwCreateWindow(width, height, "Vulkan", nullptr, nullptr);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 }
 
 Vulkan::Window::Window(int w, int h, const Log::ILogger &logger) : width{w}, height{h} {
@@ -43,4 +50,9 @@ void Vulkan::Window::drawFrame() {
 
 void Vulkan::Window::waitIdle() {
     vkDeviceWaitIdle(logicalDevice->getDevicePtr());
+}
+
+void Vulkan::Window::handleResize()
+{
+    renderer->handleOuterFrameResize();
 }

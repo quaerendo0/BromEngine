@@ -17,10 +17,10 @@ namespace Vulkan {
         ~Renderer();
 
         void cleanupSwapChain();
-
         void recreateSwapChain();
-
 		void drawFrame();
+        void handleOuterFrameResize() { framebufferResized = true; };
+
     private:
         void initCommandStructures();
         void initSyncPrimitives();
@@ -44,6 +44,8 @@ namespace Vulkan {
 		std::vector<VkSemaphore> renderFinishedSemaphores{MAX_FRAMES_IN_FLIGHT};
 		std::vector<VkFence> inFlightFences{MAX_FRAMES_IN_FLIGHT}; // fence - makes CPU wait for GPU
 		std::vector<CommandBuffer*> commandBuffers{MAX_FRAMES_IN_FLIGHT};
+
+        bool framebufferResized = false;
     };
 
 }
