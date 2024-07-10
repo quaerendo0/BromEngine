@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include "LogicalDevice.h"
+#include "../LogicalDevice.h"
 #include "SwapChain.h"
 #include "RenderPass.h"
 

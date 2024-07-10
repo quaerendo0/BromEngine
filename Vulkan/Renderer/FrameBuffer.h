@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../LogicalDevice.h"
 #include "SwapChain.h"
 #include "RenderPass.h"
-#include "LogicalDevice.h"
 #include <stdexcept>
 
 namespace Vulkan {

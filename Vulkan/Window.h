@@ -4,13 +4,8 @@
 #include "PhysicalDevice.h"
 #include "Instance.h"
 #include "Surface.h"
-#include "SwapChain.h"
 #include "Debug.h"
-#include "RenderPass.h"
-#include "GraphicsPipeline.h"
-#include "FrameBuffer.h"
-#include "CommandManager.h"
-#include "FrameManager.h"
+#include "Renderer/Renderer.h"
 
 #pragma once
 
@@ -42,11 +37,6 @@ namespace Vulkan {
         Surface *surface = nullptr;
         PhysicalDevice *physicalDevice = nullptr;
         LogicalDevice *logicalDevice = nullptr;
-        SwapChain *swapChain = nullptr;
-        RenderPass *renderPass = nullptr;
-        GraphicsPipeline *graphicsPipeline = nullptr;
-        FrameBuffer* frameBuffer = nullptr;
-        CommandManager* commandManager = nullptr;
-        FrameManager* frameManager = nullptr;
+        Renderer *renderer = nullptr;
     };
 }

@@ -17,21 +17,11 @@ Vulkan::Window::Window(int w, int h, const Log::ILogger &logger) : width{w}, hei
     physicalDevice = new PhysicalDevice{instance->getInstancePtr(), surface->getSurface(), logger};
     logicalDevice = new LogicalDevice{*physicalDevice, Instance::validationLayers, enableValidationLayers};
     // move to logical device?
-    swapChain = new SwapChain{*logicalDevice, *surface, window, logger};
-    renderPass = new RenderPass{*swapChain, *logicalDevice};
-    graphicsPipeline = new GraphicsPipeline{*logicalDevice, *swapChain, *renderPass};
-    frameBuffer = new FrameBuffer{ *swapChain, *renderPass, *logicalDevice };
-    commandManager = new CommandManager{ *logicalDevice, *renderPass, *frameBuffer, *swapChain, *graphicsPipeline };
-    frameManager = new FrameManager{ *logicalDevice, *swapChain, *commandManager };
+    renderer = new Renderer{*logicalDevice, *surface, window, logger};
 }
 
 Vulkan::Window::~Window() {
-    delete frameManager;
-    delete commandManager;
-    delete frameBuffer; // swapchain clean framebuffer?
-    delete graphicsPipeline;
-    delete renderPass;
-    delete swapChain;
+    delete renderer;
     delete logicalDevice;
     delete physicalDevice;
     delete surface;
@@ -48,7 +38,7 @@ void Vulkan::Window::pollEvents() {
 }
 
 void Vulkan::Window::drawFrame() {
-    frameManager->drawFrame();
+    renderer->drawFrame();
 }
 
 void Vulkan::Window::waitIdle() {

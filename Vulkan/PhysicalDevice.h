@@ -4,8 +4,11 @@
 #include <optional>
 #include <vector>
 #include <memory>
+
 #include "../Logger/ILogger.h"
+
 #include "PhysicalDeviceQueueFamilyIndexInfo.h"
+#include "SwapChainSupportDetails.h"
 
 namespace Vulkan {
     class PhysicalDevice {
@@ -18,6 +21,8 @@ namespace Vulkan {
         [[nodiscard]] const VkPhysicalDevice &getPhysicalDevicePtr() const { return physicalDevice; }
 
         [[nodiscard]] PhysicalDeviceQueueFamilyIndexInfo getDeviceQueueFamiliesInfo() const;
+
+        SwapChainSupportDetails getSwapChainSupport();
 
     private:
 
