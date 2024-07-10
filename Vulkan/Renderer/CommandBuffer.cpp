@@ -35,6 +35,13 @@ namespace Vulkan {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipeline());
     }
 
+    void CommandBuffer::bindVertexBuffer(const VertexBuffer& vertexBuffer)
+    {
+        VkBuffer vertexBuffers[] = {vertexBuffer.getBufferHandle()};
+        VkDeviceSize offsets[] = {0};
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+    }
+
     void CommandBuffer::startRenderPass(
         uint32_t imageIndex,
         const RenderPass& renderPass,
@@ -81,12 +88,13 @@ namespace Vulkan {
         }
     }
 
-    void CommandBuffer::initCommandBuffer(const CommandBufferInitInfo& info)
+    void CommandBuffer::recordCommandBuffer(const CommandBufferInitInfo& info)
     {
         beginRecordingCommands();
         startRenderPass(info.imageIndex, info.renderPass, info.frameBuffer, info.swapChain.getSwapChainExtent());
         bindCommandBufferToPipeline(info.pipeline);
         setupViewportScissor(info.swapChain.getSwapChainExtent());
+        bindVertexBuffer(info.vertexBuffer);
         for (const DrawCommand& command : info.commands) {
             command.execute();
         }

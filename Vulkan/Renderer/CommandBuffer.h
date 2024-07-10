@@ -5,6 +5,7 @@
 
 #include "CommandPool.h"
 #include "CommandBufferInitInfo.h"
+#include "VertexBuffer.h"
 
 namespace Vulkan {
     class CommandBuffer
@@ -13,7 +14,7 @@ namespace Vulkan {
         CommandBuffer(const LogicalDevice &device, const CommandPool &commandPool);
         ~CommandBuffer();
 
-		void initCommandBuffer(const CommandBufferInitInfo& info);
+		void recordCommandBuffer(const CommandBufferInitInfo& info);
 		void resetCommandBuffer() const;
 
         const VkCommandBuffer &getBuffer() const noexcept { return commandBuffer; }
@@ -23,6 +24,7 @@ namespace Vulkan {
 
 		void beginRecordingCommands() const;
 		void bindCommandBufferToPipeline(const GraphicsPipeline &pipeline);
+        void bindVertexBuffer(const VertexBuffer& vertexBuffer);
 		void startRenderPass(
             uint32_t imageIndex,
             const RenderPass& renderPass,

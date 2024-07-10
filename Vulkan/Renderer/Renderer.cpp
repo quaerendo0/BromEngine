@@ -11,12 +11,22 @@ namespace Vulkan {
         graphicsPipeline = new GraphicsPipeline{device, swapChain->getSwapChainExtent(), *renderPass};
         frameBuffer = new FrameBuffer{ *swapChain, *renderPass, device };
 
+        const std::vector<Vertex> vertices = {
+            {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+        };
+
+        vertexBuffer = new VertexBuffer{device, vertices};
+
         initCommandStructures();
         initSyncPrimitives();
     }
 
     Renderer::~Renderer()
     {
+        delete vertexBuffer;
+
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             delete commandBuffers[i];
         }
@@ -78,9 +88,10 @@ namespace Vulkan {
             *frameBuffer,
             *graphicsPipeline,
             *swapChain,
-            { DrawCommand{ commandBuffer } }
+            { DrawCommand{ commandBuffer } },
+            *vertexBuffer
         };
-        commandBuffer.initCommandBuffer(info);
+        commandBuffer.recordCommandBuffer(info);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
