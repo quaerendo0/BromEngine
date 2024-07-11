@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ICommand.h"
-#include "../Buffers/StagingBuffer.h"
+#include "../Buffers/AbstractBuffer.h"
 
 namespace Vulkan {
 
@@ -9,10 +9,10 @@ namespace Vulkan {
 
 	class DrawCommand : public ICommand {
 	public:
-		DrawCommand(CommandBuffer& buffer, const StagingBuffer& stagingBuffer);
+		DrawCommand(CommandBuffer& buffer, const AbstractBuffer& stagingBuffer);
 		void execute() const override;
 	private:
-		const StagingBuffer& stagingBuffer;
+		const AbstractBuffer& stagingBuffer;
 		CommandBuffer& buffer;
 	};
 }

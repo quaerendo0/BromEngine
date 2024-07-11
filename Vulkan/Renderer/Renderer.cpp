@@ -5,6 +5,7 @@
 #include "Commands/StartRenderPassCommand.h"
 #include "Commands/StopRenderPassCommand.h"
 #include "Commands/SetupViewportScissorCommand.h"
+#include "Commands/CopyBufferCommand.h"
 
 namespace Vulkan {
 
@@ -15,6 +16,10 @@ namespace Vulkan {
         renderPass = new RenderPass{swapChain->getSwapChainImageFormat(), device};
         graphicsPipeline = new GraphicsPipeline{device, swapChain->getSwapChainExtent(), *renderPass};
         frameBuffer = new FrameBuffer{ *swapChain, *renderPass, device };
+        initCommandStructures();
+        initSyncPrimitives();
+
+        /*---------------------------------------*/
 
         const std::vector<Vertex> vertices = {
             {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
@@ -27,14 +32,28 @@ namespace Vulkan {
         };
 
         stagingBuffer = new StagingBuffer{device, vertices};
+        deviceVertexBuffer = new DeviceVertexBuffer{device, vertices};
 
-        initCommandStructures();
-        initSyncPrimitives();
+        CommandBuffer tempCopyCommandBuffer{device, *commandPool};
+
+        std::vector<std::unique_ptr<ICommand>> commands{};
+        commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, *stagingBuffer, *deviceVertexBuffer));
+        tempCopyCommandBuffer.recordCommandBuffer(commands);
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &tempCopyCommandBuffer.getBuffer();
+
+        vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
+
+        vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer.getBuffer());
     }
 
     Renderer::~Renderer()
     {
         delete stagingBuffer;
+        delete deviceVertexBuffer;
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             delete commandBuffers[i];
@@ -95,7 +114,7 @@ namespace Vulkan {
         commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer, swapChain->getSwapChainExtent()));
         commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
         commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
-        commands.push_back(std::make_unique<DrawCommand>(commandBuffer, *stagingBuffer));
+        commands.push_back(std::make_unique<DrawCommand>(commandBuffer, *deviceVertexBuffer));
         commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
         commandBuffer.recordCommandBuffer(commands);
 
