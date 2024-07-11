@@ -6,6 +6,7 @@
 #include "Commands/StopRenderPassCommand.h"
 #include "Commands/SetupViewportScissorCommand.h"
 #include "Commands/CopyBufferCommand.h"
+#include "Commands/DrawIndexedCommand.h"
 
 namespace Vulkan {
 
@@ -22,13 +23,10 @@ namespace Vulkan {
         /*---------------------------------------*/
 
         const std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-            {{0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
+            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
         };
 
         const std::vector<uint16_t> indices = {
@@ -37,12 +35,11 @@ namespace Vulkan {
 
         StagingBuffer stagingBuffer {device, vertices};
         vertexBuffer = new DeviceVertexBuffer{device, vertices};
-
         CommandBuffer tempCopyCommandBuffer{device, *commandPool};
-
         std::vector<std::unique_ptr<ICommand>> commands{};
         commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, stagingBuffer, *vertexBuffer));
         tempCopyCommandBuffer.recordCommandBuffer(commands);
+
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
@@ -52,6 +49,26 @@ namespace Vulkan {
         vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
 
         vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer.getBuffer());
+
+        /*--------------------------------*/
+
+        StagingBuffer stagingBuffer2 {device, indices};
+        indexBuffer = new DeviceIndexBuffer{device, indices};
+        CommandBuffer tempCopyCommandBuffer2{device, *commandPool};
+        std::vector<std::unique_ptr<ICommand>> commands2{};
+        commands2.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer2, stagingBuffer2, *indexBuffer));
+        tempCopyCommandBuffer2.recordCommandBuffer(commands2);
+
+        VkSubmitInfo submitInfo2{};
+        submitInfo2.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo2.commandBufferCount = 1;
+        submitInfo2.pCommandBuffers = &tempCopyCommandBuffer2.getBuffer();
+
+        vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo2, VK_NULL_HANDLE);
+        vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
+
+        vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer2.getBuffer());
+
     }
 
     Renderer::~Renderer()
@@ -118,7 +135,7 @@ namespace Vulkan {
         commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer, swapChain->getSwapChainExtent()));
         commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
         commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
-        commands.push_back(std::make_unique<DrawCommand>(commandBuffer, *vertexBuffer));
+        commands.push_back(std::make_unique<DrawIndexedCommand<Vertex, uint16_t>>(commandBuffer, *vertexBuffer, *indexBuffer));
         commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
         commandBuffer.recordCommandBuffer(commands);
 
