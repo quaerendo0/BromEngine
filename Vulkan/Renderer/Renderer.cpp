@@ -1,5 +1,10 @@
 #include "Renderer.h"
 #include <algorithm>
+#include "Commands/DrawCommand.h"
+#include "Commands/BindCommandBufferToPipelineCommand.h"
+#include "Commands/StartRenderPassCommand.h"
+#include "Commands/StopRenderPassCommand.h"
+#include "Commands/SetupViewportScissorCommand.h"
 
 namespace Vulkan {
 
@@ -21,7 +26,7 @@ namespace Vulkan {
             {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
         };
 
-        vertexBuffer = new VertexBuffer{device, vertices};
+        stagingBuffer = new StagingBuffer{device, vertices};
 
         initCommandStructures();
         initSyncPrimitives();
@@ -29,7 +34,7 @@ namespace Vulkan {
 
     Renderer::~Renderer()
     {
-        delete vertexBuffer;
+        delete stagingBuffer;
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             delete commandBuffers[i];
@@ -86,29 +91,23 @@ namespace Vulkan {
         vkResetFences(d, 1, &inFlightFences[currentFrame]);
 
         auto commandBuffer = *commandBuffers[currentFrame];
-        CommandBufferInitInfo info {
-            imageIndex,
-            *renderPass,
-            *frameBuffer,
-            *graphicsPipeline,
-            *swapChain,
-            { DrawCommand{ commandBuffer, vertexBuffer->size() } },
-            *vertexBuffer
-        };
-        commandBuffer.recordCommandBuffer(info);
+        std::vector<std::unique_ptr<ICommand>> commands{};
+        commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer, swapChain->getSwapChainExtent()));
+        commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
+        commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
+        commands.push_back(std::make_unique<DrawCommand>(commandBuffer, *stagingBuffer));
+        commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
+        commandBuffer.recordCommandBuffer(commands);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
         VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
-
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer.getBuffer();
-
         VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
@@ -119,14 +118,11 @@ namespace Vulkan {
 
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
         presentInfo.waitSemaphoreCount = 1;
         presentInfo.pWaitSemaphores = signalSemaphores;
-
         VkSwapchainKHR swapChains[] = { swapChain->getSwapChain() };
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
-
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(device.getPresentQueue().getQueue(), &presentInfo);
