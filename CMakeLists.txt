@@ -30,9 +30,30 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Window.cpp
         Vulkan/Window.h
 
+        Vulkan/Renderer/Commands/ICommand.h
+        Vulkan/Renderer/Commands/DrawCommand.h
+        Vulkan/Renderer/Commands/DrawCommand.cpp
+        Vulkan/Renderer/Commands/DrawIndexedCommand.h
+        Vulkan/Renderer/Commands/DrawIndexedCommand.cpp
+        Vulkan/Renderer/Commands/StartRenderPassCommand.h
+        Vulkan/Renderer/Commands/StartRenderPassCommand.cpp
+        Vulkan/Renderer/Commands/BindCommandBufferToPipelineCommand.h
+        Vulkan/Renderer/Commands/BindCommandBufferToPipelineCommand.cpp
+        Vulkan/Renderer/Commands/SetupViewportScissorCommand.h
+        Vulkan/Renderer/Commands/SetupViewportScissorCommand.cpp
+        Vulkan/Renderer/Commands/StopRenderPassCommand.h
+        Vulkan/Renderer/Commands/StopRenderPassCommand.cpp
+        Vulkan/Renderer/Commands/CopyBufferCommand.h
+        Vulkan/Renderer/Commands/CopyBufferCommand.cpp
+
+        Vulkan/Renderer/Buffers/AbstractBuffer.h
+        Vulkan/Renderer/Buffers/AbstractBuffer.cpp
+        Vulkan/Renderer/Buffers/StagingBuffer.h
+        Vulkan/Renderer/Buffers/DeviceVertexBuffer.h
+        Vulkan/Renderer/Buffers/DeviceIndexBuffer.h
+
         Vulkan/Renderer/CommandBuffer.cpp
         Vulkan/Renderer/CommandBuffer.h
-        Vulkan/Renderer/CommandBufferInitInfo.h
         Vulkan/Renderer/CommandPool.cpp
         Vulkan/Renderer/CommandPool.h
         Vulkan/Renderer/FrameBuffer.cpp
@@ -45,10 +66,6 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Renderer/RenderPass.h
         Vulkan/Renderer/SwapChain.cpp
         Vulkan/Renderer/SwapChain.h
-        Vulkan/Renderer/DrawCommand.h
-        Vulkan/Renderer/DrawCommand.cpp
-        Vulkan/Renderer/VertexBuffer.h
-        Vulkan/Renderer/VertexBuffer.cpp
 
         Vulkan/Geometry/Vertex.h
 )

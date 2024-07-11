@@ -1,7 +1,31 @@
 #include "Renderer.h"
 #include <algorithm>
+#include "Commands/DrawCommand.h"
+#include "Commands/BindCommandBufferToPipelineCommand.h"
+#include "Commands/StartRenderPassCommand.h"
+#include "Commands/StopRenderPassCommand.h"
+#include "Commands/SetupViewportScissorCommand.h"
+#include "Commands/CopyBufferCommand.h"
+#include "Commands/DrawIndexedCommand.h"
 
 namespace Vulkan {
+
+    void transferDataToGPU(const LogicalDevice &device, CommandPool *commandPool, const AbstractBuffer& srcBuffer, const AbstractBuffer &trgtBuffer) {
+        CommandBuffer tempCopyCommandBuffer{device, *commandPool};
+        std::vector<std::unique_ptr<ICommand>> commands{};
+        commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, srcBuffer, trgtBuffer));
+        tempCopyCommandBuffer.recordCommandBuffer(commands);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &tempCopyCommandBuffer.getBuffer();
+
+        vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
+
+        vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer.getBuffer());
+    }
 
     Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger)
         : device{device}, surface{surface}, window{window}, logger{logger}
@@ -10,26 +34,37 @@ namespace Vulkan {
         renderPass = new RenderPass{swapChain->getSwapChainImageFormat(), device};
         graphicsPipeline = new GraphicsPipeline{device, swapChain->getSwapChainExtent(), *renderPass};
         frameBuffer = new FrameBuffer{ *swapChain, *renderPass, device };
-
-        const std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-            {{0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-
-            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-        };
-
-        vertexBuffer = new VertexBuffer{device, vertices};
-
         initCommandStructures();
         initSyncPrimitives();
+
+        /*---------------------------------------*/
+
+        const std::vector<Vertex> vertices = {
+            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+        };
+
+        const std::vector<uint16_t> indices = {
+            0, 1, 2, 2, 3, 0
+        };
+
+        StagingBuffer vertexStagingBuffer {device, vertices};
+        vertexBuffer = new DeviceVertexBuffer{device, vertices};
+        transferDataToGPU(device, commandPool, vertexStagingBuffer, *vertexBuffer);
+
+        /*--------------------------------*/
+
+        StagingBuffer indexStagingBuffer {device, indices};
+        indexBuffer = new DeviceIndexBuffer{device, indices};
+        transferDataToGPU(device, commandPool, indexStagingBuffer, *indexBuffer);
     }
 
     Renderer::~Renderer()
     {
         delete vertexBuffer;
+        delete indexBuffer;
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             delete commandBuffers[i];
@@ -86,29 +121,23 @@ namespace Vulkan {
         vkResetFences(d, 1, &inFlightFences[currentFrame]);
 
         auto commandBuffer = *commandBuffers[currentFrame];
-        CommandBufferInitInfo info {
-            imageIndex,
-            *renderPass,
-            *frameBuffer,
-            *graphicsPipeline,
-            *swapChain,
-            { DrawCommand{ commandBuffer, vertexBuffer->size() } },
-            *vertexBuffer
-        };
-        commandBuffer.recordCommandBuffer(info);
+        std::vector<std::unique_ptr<ICommand>> commands{};
+        commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer, swapChain->getSwapChainExtent()));
+        commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
+        commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
+        commands.push_back(std::make_unique<DrawIndexedCommand<Vertex, uint16_t>>(commandBuffer, *vertexBuffer, *indexBuffer));
+        commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
+        commandBuffer.recordCommandBuffer(commands);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
         VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
-
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer.getBuffer();
-
         VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
@@ -119,14 +148,11 @@ namespace Vulkan {
 
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
         presentInfo.waitSemaphoreCount = 1;
         presentInfo.pWaitSemaphores = signalSemaphores;
-
         VkSwapchainKHR swapChains[] = { swapChain->getSwapChain() };
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
-
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(device.getPresentQueue().getQueue(), &presentInfo);

@@ -8,7 +8,9 @@
 #include "FrameBuffer.h"
 #include "CommandPool.h"
 #include "CommandBuffer.h"
-#include "VertexBuffer.h"
+#include "./Buffers/StagingBuffer.h"
+#include "Buffers/DeviceVertexBuffer.h"
+#include "Buffers/DeviceIndexBuffer.h"
 
 namespace Vulkan {
     class Renderer
@@ -35,7 +37,9 @@ namespace Vulkan {
         RenderPass *renderPass = nullptr;
         GraphicsPipeline *graphicsPipeline = nullptr;
         FrameBuffer* frameBuffer = nullptr;
-        VertexBuffer* vertexBuffer = nullptr;
+
+        DeviceVertexBuffer<Vertex>* vertexBuffer = nullptr;
+        DeviceIndexBuffer<uint16_t>* indexBuffer = nullptr;
 
 		CommandPool* commandPool;
 

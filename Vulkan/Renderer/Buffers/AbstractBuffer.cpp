@@ -1,4 +1,4 @@
-#include "VertexBuffer.h"
+#include "AbstractBuffer.h"
 
 #include "vulkan/vulkan.h"
 #include <stdexcept>
@@ -16,21 +16,29 @@ uint32_t findMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPr
     throw std::runtime_error("failed to find suitable memory type!");
 }
 
-Vulkan::VertexBuffer::VertexBuffer(const LogicalDevice &device, const std::vector<Vertex> &vertices)
+Vulkan::AbstractBuffer::AbstractBuffer(
+    const LogicalDevice &device,
+    VkBufferUsageFlags usage,
+    VkDeviceSize size,
+    size_t elementCount,
+    VkMemoryPropertyFlags properties)
     : device{device}
 {
+    _size = size;
+    _elementCount = elementCount;
+
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufferInfo.size = sizeof(vertices[0]) * vertices.size();
-    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    bufferInfo.size = _size;
+    bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(device.getDevicePtr(), &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
+    if (vkCreateBuffer(device.getDevicePtr(), &bufferInfo, nullptr, &stagingBuffer) != VK_SUCCESS) {
         throw std::runtime_error("failed to create vertex buffer!");
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(device.getDevicePtr(), vertexBuffer, &memRequirements);
+    vkGetBufferMemoryRequirements(device.getDevicePtr(), stagingBuffer, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -38,24 +46,17 @@ Vulkan::VertexBuffer::VertexBuffer(const LogicalDevice &device, const std::vecto
     allocInfo.memoryTypeIndex = findMemoryType(
         device.getParentPhysicalDevice().getPhysicalDevicePtr(),
         memRequirements.memoryTypeBits,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        properties);
 
-    if (vkAllocateMemory(device.getDevicePtr(), &allocInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS) {
+    if (vkAllocateMemory(device.getDevicePtr(), &allocInfo, nullptr, &stagingBufferMemory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate vertex buffer memory!");
     }
 
-    vkBindBufferMemory(device.getDevicePtr(), vertexBuffer, vertexBufferMemory, 0);
-
-    void* data;
-    vkMapMemory(device.getDevicePtr(), vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-    memcpy(data, vertices.data(), (size_t) bufferInfo.size);
-    vkUnmapMemory(device.getDevicePtr(), vertexBufferMemory);
-
-    _size = vertices.size();
+    vkBindBufferMemory(device.getDevicePtr(), stagingBuffer, stagingBufferMemory, 0);
 }
 
-Vulkan::VertexBuffer::~VertexBuffer()
+Vulkan::AbstractBuffer::~AbstractBuffer()
 {
-    vkDestroyBuffer(device.getDevicePtr(), vertexBuffer, nullptr);
-    vkFreeMemory(device.getDevicePtr(), vertexBufferMemory, nullptr);
+    vkDestroyBuffer(device.getDevicePtr(), stagingBuffer, nullptr);
+    vkFreeMemory(device.getDevicePtr(), stagingBufferMemory, nullptr);
 }
