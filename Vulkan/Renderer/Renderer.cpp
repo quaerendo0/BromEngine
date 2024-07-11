@@ -10,6 +10,23 @@
 
 namespace Vulkan {
 
+    void transferDataToGPU(const LogicalDevice &device, CommandPool *commandPool, const AbstractBuffer& srcBuffer, const AbstractBuffer &trgtBuffer) {
+        CommandBuffer tempCopyCommandBuffer{device, *commandPool};
+        std::vector<std::unique_ptr<ICommand>> commands{};
+        commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, srcBuffer, trgtBuffer));
+        tempCopyCommandBuffer.recordCommandBuffer(commands);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &tempCopyCommandBuffer.getBuffer();
+
+        vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
+
+        vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer.getBuffer());
+    }
+
     Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger)
         : device{device}, surface{surface}, window{window}, logger{logger}
     {
@@ -33,42 +50,15 @@ namespace Vulkan {
             0, 1, 2, 2, 3, 0
         };
 
-        StagingBuffer stagingBuffer {device, vertices};
+        StagingBuffer vertexStagingBuffer {device, vertices};
         vertexBuffer = new DeviceVertexBuffer{device, vertices};
-        CommandBuffer tempCopyCommandBuffer{device, *commandPool};
-        std::vector<std::unique_ptr<ICommand>> commands{};
-        commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, stagingBuffer, *vertexBuffer));
-        tempCopyCommandBuffer.recordCommandBuffer(commands);
-
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &tempCopyCommandBuffer.getBuffer();
-
-        vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
-
-        vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer.getBuffer());
+        transferDataToGPU(device, commandPool, vertexStagingBuffer, *vertexBuffer);
 
         /*--------------------------------*/
 
-        StagingBuffer stagingBuffer2 {device, indices};
+        StagingBuffer indexStagingBuffer {device, indices};
         indexBuffer = new DeviceIndexBuffer{device, indices};
-        CommandBuffer tempCopyCommandBuffer2{device, *commandPool};
-        std::vector<std::unique_ptr<ICommand>> commands2{};
-        commands2.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer2, stagingBuffer2, *indexBuffer));
-        tempCopyCommandBuffer2.recordCommandBuffer(commands2);
-
-        VkSubmitInfo submitInfo2{};
-        submitInfo2.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo2.commandBufferCount = 1;
-        submitInfo2.pCommandBuffers = &tempCopyCommandBuffer2.getBuffer();
-
-        vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo2, VK_NULL_HANDLE);
-        vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
-
-        vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer2.getBuffer());
-
+        transferDataToGPU(device, commandPool, indexStagingBuffer, *indexBuffer);
     }
 
     Renderer::~Renderer()
