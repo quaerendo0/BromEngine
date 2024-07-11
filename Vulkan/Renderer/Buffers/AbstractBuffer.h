@@ -11,16 +11,21 @@ namespace Vulkan
         virtual ~AbstractBuffer();
 
         const VkBuffer &getBufferHandle() const { return stagingBuffer; }
-        uint32_t size() const { return _size; }
-        VkDeviceSize vertexCount() const { return _vertexCount; }
+        VkDeviceSize size() const { return _size; }
+        size_t elementCount() const { return _elementCount; }
 
     protected:
-        AbstractBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, const std::vector<Vertex> &vertices, VkMemoryPropertyFlags properties);
+        AbstractBuffer(
+            const LogicalDevice &device,
+            VkBufferUsageFlags usage,
+            VkDeviceSize size,
+            size_t elementCount,
+            VkMemoryPropertyFlags properties);
         const LogicalDevice &device;
 
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
-        uint32_t _vertexCount;
+        size_t _elementCount;
         VkDeviceSize _size;
     };
 }

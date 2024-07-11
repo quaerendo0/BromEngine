@@ -31,13 +31,17 @@ namespace Vulkan {
             {{-0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},
         };
 
-        stagingBuffer = new StagingBuffer{device, vertices};
-        deviceVertexBuffer = new DeviceVertexBuffer{device, vertices};
+        const std::vector<uint16_t> indices = {
+            0, 1, 2, 2, 3, 0
+        };
+
+        StagingBuffer stagingBuffer {device, vertices};
+        vertexBuffer = new DeviceVertexBuffer{device, vertices};
 
         CommandBuffer tempCopyCommandBuffer{device, *commandPool};
 
         std::vector<std::unique_ptr<ICommand>> commands{};
-        commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, *stagingBuffer, *deviceVertexBuffer));
+        commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, stagingBuffer, *vertexBuffer));
         tempCopyCommandBuffer.recordCommandBuffer(commands);
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -52,8 +56,8 @@ namespace Vulkan {
 
     Renderer::~Renderer()
     {
-        delete stagingBuffer;
-        delete deviceVertexBuffer;
+        delete vertexBuffer;
+        delete indexBuffer;
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             delete commandBuffers[i];
@@ -114,7 +118,7 @@ namespace Vulkan {
         commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer, swapChain->getSwapChainExtent()));
         commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
         commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
-        commands.push_back(std::make_unique<DrawCommand>(commandBuffer, *deviceVertexBuffer));
+        commands.push_back(std::make_unique<DrawCommand>(commandBuffer, *vertexBuffer));
         commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
         commandBuffer.recordCommandBuffer(commands);
 

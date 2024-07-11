@@ -37,8 +37,8 @@ namespace Vulkan {
         GraphicsPipeline *graphicsPipeline = nullptr;
         FrameBuffer* frameBuffer = nullptr;
 
-        StagingBuffer* stagingBuffer = nullptr;
-        DeviceVertexBuffer* deviceVertexBuffer = nullptr;
+        DeviceVertexBuffer<Vertex>* vertexBuffer = nullptr;
+        DeviceVertexBuffer<uint16_t>* indexBuffer = nullptr;
 
 		CommandPool* commandPool;
 

@@ -13,5 +13,5 @@ void Vulkan::DrawCommand::execute() const
     VkBuffer stagingBuffers[] = {stagingBuffer.getBufferHandle()};
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(buffer.getBuffer(), 0, 1, stagingBuffers, offsets);
-    vkCmdDraw(buffer.getBuffer(), stagingBuffer.vertexCount(), 1, 0, 0);
+    vkCmdDraw(buffer.getBuffer(), stagingBuffer.elementCount(), 1, 0, 0);
 }

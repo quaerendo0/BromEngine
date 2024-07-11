@@ -33,6 +33,8 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Renderer/Commands/ICommand.h
         Vulkan/Renderer/Commands/DrawCommand.h
         Vulkan/Renderer/Commands/DrawCommand.cpp
+        Vulkan/Renderer/Commands/DrawIndexedCommand.h
+        Vulkan/Renderer/Commands/DrawIndexedCommand.cpp
         Vulkan/Renderer/Commands/StartRenderPassCommand.h
         Vulkan/Renderer/Commands/StartRenderPassCommand.cpp
         Vulkan/Renderer/Commands/BindCommandBufferToPipelineCommand.h
@@ -46,10 +48,9 @@ add_executable(${PROJECT_NAME} main.cpp
 
         Vulkan/Renderer/Buffers/AbstractBuffer.h
         Vulkan/Renderer/Buffers/AbstractBuffer.cpp
-        Vulkan/Renderer/Buffers/StagingBuffer.cpp
         Vulkan/Renderer/Buffers/StagingBuffer.h
         Vulkan/Renderer/Buffers/DeviceVertexBuffer.h
-        Vulkan/Renderer/Buffers/DeviceVertexBuffer.cpp
+        Vulkan/Renderer/Buffers/DeviceIndexBuffer.h
 
         Vulkan/Renderer/CommandBuffer.cpp
         Vulkan/Renderer/CommandBuffer.h

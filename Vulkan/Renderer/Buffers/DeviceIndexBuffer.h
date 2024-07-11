@@ -5,16 +5,16 @@
 
 namespace Vulkan {
     template<class T>
-    class DeviceVertexBuffer : public AbstractBuffer
+    class DeviceIndexBuffer : public AbstractBuffer
     {
     public:
-        DeviceVertexBuffer(const LogicalDevice &device, const std::vector<T> &elements)
+        DeviceIndexBuffer(const LogicalDevice &device, const std::vector<T> &elements)
             : AbstractBuffer{
                 device,
-                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                 sizeof(elements[0]) * elements.size(),
                 elements.size(),
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT} {};
-        virtual ~DeviceVertexBuffer() {};
+        virtual ~DeviceIndexBuffer() {};
     };
 }

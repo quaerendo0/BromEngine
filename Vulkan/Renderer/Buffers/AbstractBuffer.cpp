@@ -16,11 +16,16 @@ uint32_t findMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPr
     throw std::runtime_error("failed to find suitable memory type!");
 }
 
-Vulkan::AbstractBuffer::AbstractBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, const std::vector<Vertex> &vertices, VkMemoryPropertyFlags properties)
+Vulkan::AbstractBuffer::AbstractBuffer(
+    const LogicalDevice &device,
+    VkBufferUsageFlags usage,
+    VkDeviceSize size,
+    size_t elementCount,
+    VkMemoryPropertyFlags properties)
     : device{device}
 {
-    _size = sizeof(vertices[0]) * vertices.size();
-    _vertexCount = vertices.size();
+    _size = size;
+    _elementCount = elementCount;
 
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
