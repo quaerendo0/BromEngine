@@ -49,8 +49,9 @@ add_executable(${PROJECT_NAME} main.cpp
         Vulkan/Renderer/Buffers/AbstractBuffer.h
         Vulkan/Renderer/Buffers/AbstractBuffer.cpp
         Vulkan/Renderer/Buffers/StagingBuffer.h
-        Vulkan/Renderer/Buffers/DeviceVertexBuffer.h
-        Vulkan/Renderer/Buffers/DeviceIndexBuffer.h
+        Vulkan/Renderer/Buffers/StagingBuffer.cpp
+        Vulkan/Renderer/Buffers/DeviceInternalBuffer.h
+        Vulkan/Renderer/Buffers/DeviceInternalBuffer.cpp
 
         Vulkan/Renderer/CommandBuffer.cpp
         Vulkan/Renderer/CommandBuffer.h

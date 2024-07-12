@@ -10,7 +10,7 @@ namespace Vulkan
     public:
         virtual ~AbstractBuffer();
 
-        const VkBuffer &getBufferHandle() const { return stagingBuffer; }
+        const VkBuffer &getBufferHandle() const { return bufferHandle; }
         VkDeviceSize size() const { return _size; }
         size_t elementCount() const { return _elementCount; }
 
@@ -23,8 +23,8 @@ namespace Vulkan
             VkMemoryPropertyFlags properties);
         const LogicalDevice &device;
 
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+        VkBuffer bufferHandle;
+        VkDeviceMemory bufferMemory;
         size_t _elementCount;
         VkDeviceSize _size;
     };

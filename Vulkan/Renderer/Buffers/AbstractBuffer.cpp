@@ -33,12 +33,12 @@ Vulkan::AbstractBuffer::AbstractBuffer(
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(device.getDevicePtr(), &bufferInfo, nullptr, &stagingBuffer) != VK_SUCCESS) {
+    if (vkCreateBuffer(device.getDevicePtr(), &bufferInfo, nullptr, &bufferHandle) != VK_SUCCESS) {
         throw std::runtime_error("failed to create vertex buffer!");
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(device.getDevicePtr(), stagingBuffer, &memRequirements);
+    vkGetBufferMemoryRequirements(device.getDevicePtr(), bufferHandle, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -48,15 +48,15 @@ Vulkan::AbstractBuffer::AbstractBuffer(
         memRequirements.memoryTypeBits,
         properties);
 
-    if (vkAllocateMemory(device.getDevicePtr(), &allocInfo, nullptr, &stagingBufferMemory) != VK_SUCCESS) {
+    if (vkAllocateMemory(device.getDevicePtr(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate vertex buffer memory!");
     }
 
-    vkBindBufferMemory(device.getDevicePtr(), stagingBuffer, stagingBufferMemory, 0);
+    vkBindBufferMemory(device.getDevicePtr(), bufferHandle, bufferMemory, 0);
 }
 
 Vulkan::AbstractBuffer::~AbstractBuffer()
 {
-    vkDestroyBuffer(device.getDevicePtr(), stagingBuffer, nullptr);
-    vkFreeMemory(device.getDevicePtr(), stagingBufferMemory, nullptr);
+    vkDestroyBuffer(device.getDevicePtr(), bufferHandle, nullptr);
+    vkFreeMemory(device.getDevicePtr(), bufferMemory, nullptr);
 }

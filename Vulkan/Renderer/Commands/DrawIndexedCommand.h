@@ -4,15 +4,13 @@
 
 #include "ICommand.h"
 #include "../CommandBuffer.h"
-#include "../Buffers/DeviceIndexBuffer.h"
-#include "../Buffers/DeviceVertexBuffer.h"
+#include "../Buffers/DeviceInternalBuffer.h"
 
 namespace Vulkan {
-	template <class T1, class T2>
 	class DrawIndexedCommand : public ICommand {
 	public:
-		DrawIndexedCommand(CommandBuffer& buffer, const DeviceVertexBuffer<T1>& vertexBuffer, const DeviceIndexBuffer<T2>& indexBuffer)
-		: buffer{buffer}, vertexBuffer{vertexBuffer}, indexBuffer{indexBuffer} {};
+		DrawIndexedCommand(CommandBuffer& buffer, const DeviceInternalBuffer& vertexBuffer, const DeviceInternalBuffer& indexBuffer)
+		: vertexBuffer{vertexBuffer}, buffer{buffer}, indexBuffer{indexBuffer} {};
 
 		void execute() const override {
             VkBuffer vertexBuffers[] = {vertexBuffer.getBufferHandle()};
@@ -22,8 +20,8 @@ namespace Vulkan {
 			vkCmdDrawIndexed(buffer.getBuffer(), static_cast<uint32_t>(indexBuffer.elementCount()), 1, 0, 0, 0);
 		};
 	private:
-		const DeviceVertexBuffer<T1>& vertexBuffer;
-		const DeviceIndexBuffer<T2>& indexBuffer;
+		const DeviceInternalBuffer& vertexBuffer;
+		const DeviceInternalBuffer& indexBuffer;
 		CommandBuffer& buffer;
 	};
 }

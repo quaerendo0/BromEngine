@@ -50,14 +50,14 @@ namespace Vulkan {
             0, 1, 2, 2, 3, 0
         };
 
-        StagingBuffer vertexStagingBuffer {device, vertices};
-        vertexBuffer = new DeviceVertexBuffer{device, vertices};
+        StagingBuffer vertexStagingBuffer {device, sizeof(vertices[0])*vertices.size(), vertices.size(), vertices.data()};
+        vertexBuffer = new DeviceInternalBuffer{device, InternalMemoryType::VertexBuffer, sizeof(vertices[0])*vertices.size(), vertices.size()};
         transferDataToGPU(device, commandPool, vertexStagingBuffer, *vertexBuffer);
 
         /*--------------------------------*/
 
-        StagingBuffer indexStagingBuffer {device, indices};
-        indexBuffer = new DeviceIndexBuffer{device, indices};
+        StagingBuffer indexStagingBuffer {device, sizeof(indices[0])*indices.size(), indices.size(), indices.data()};
+        indexBuffer = new DeviceInternalBuffer{device, InternalMemoryType::IndexBuffer, sizeof(indices[0])*indices.size(), indices.size()};
         transferDataToGPU(device, commandPool, indexStagingBuffer, *indexBuffer);
     }
 
@@ -125,7 +125,7 @@ namespace Vulkan {
         commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer, swapChain->getSwapChainExtent()));
         commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
         commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
-        commands.push_back(std::make_unique<DrawIndexedCommand<Vertex, uint16_t>>(commandBuffer, *vertexBuffer, *indexBuffer));
+        commands.push_back(std::make_unique<DrawIndexedCommand>(commandBuffer, *vertexBuffer, *indexBuffer));
         commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
         commandBuffer.recordCommandBuffer(commands);
 
