@@ -4,8 +4,10 @@
 
 #include "./Buffers/DeviceInternalBuffer.h"
 #include "./Buffers/StagingBuffer.h"
+#include "./Buffers/UniformBuffer.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "DescriptorManager.h"
 #include "Frame.h"
 #include "FrameBuffer.h"
 #include "GraphicsPipeline.h"
@@ -31,9 +33,12 @@ private:
 
   SwapChain *swapChain = nullptr;
   RenderPass *renderPass = nullptr;
+  DescriptorSetLayout *descriptorSetLayout = nullptr;
   GraphicsPipeline *graphicsPipeline = nullptr;
   FrameBuffer *frameBuffer = nullptr;
+  DescriptorManager *descriptorManager = nullptr;
 
+  std::vector<UniformBuffer *> uniformBuffers;
   DeviceInternalBuffer *vertexBuffer = nullptr;
   DeviceInternalBuffer *indexBuffer = nullptr;
 

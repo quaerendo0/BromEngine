@@ -204,19 +204,19 @@ ColorBlendConfig getColorBlendingConfig() {
   return config;
 }
 
-VkPipelineLayoutCreateInfo getPipelineLayoutInfoConfig() {
+VkPipelineLayoutCreateInfo getPipelineLayoutInfoConfig(const DescriptorSetLayout &descriptorSetLayout) {
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-  pipelineLayoutInfo.setLayoutCount = 0;            // Optional
-  pipelineLayoutInfo.pSetLayouts = nullptr;         // Optional
-  pipelineLayoutInfo.pushConstantRangeCount = 0;    // Optional
-  pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+  pipelineLayoutInfo.setLayoutCount = 1;                             // Optional
+  pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout.getLayout(); // Optional
+  pipelineLayoutInfo.pushConstantRangeCount = 0;                     // Optional
+  pipelineLayoutInfo.pPushConstantRanges = nullptr;                  // Optional
 
   return pipelineLayoutInfo;
 }
 
 GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice, const VkExtent2D swapChainExtent,
-                                   const RenderPass &renderPass)
+                                   const DescriptorSetLayout &descriptorSetLayout, const RenderPass &renderPass)
     : logicalDevice{logicalDevice} {
   const auto device = logicalDevice.getDevicePtr();
 
@@ -228,7 +228,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice, const VkE
   const auto rasterizer = getRasterizerConfig();
   const auto multisampling = getMultisamplingConfig();
   const auto colorBlending = getColorBlendingConfig();
-  const auto pipelineLayoutInfo = getPipelineLayoutInfoConfig();
+  const auto pipelineLayoutInfo = getPipelineLayoutInfoConfig(descriptorSetLayout);
 
   if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
     throw std::runtime_error("failed to create pipeline layout!");

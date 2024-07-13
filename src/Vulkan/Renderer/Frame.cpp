@@ -1,9 +1,11 @@
 #include "Frame.h"
 #include "Commands/BindCommandBufferToPipelineCommand.h"
+#include "Commands/BindDescriptorSetCommand.h"
 #include "Commands/DrawIndexedCommand.h"
 #include "Commands/SetupViewportScissorCommand.h"
 #include "Commands/StartRenderPassCommand.h"
 #include "Commands/StopRenderPassCommand.h"
+
 
 namespace Vulkan {
 Frame::Frame(const LogicalDevice &device, SwapChain *swapChain, FrameBuffer *frameBuffer, const CommandPool &pool)
@@ -30,7 +32,8 @@ Frame::~Frame() {
 }
 
 DrawStatus Frame::drawIndexed(const RenderPass &pass, const GraphicsPipeline &graphicsPipeline,
-                              const DeviceInternalBuffer &vertexBuffer, const DeviceInternalBuffer &indexBuffer) {
+                              const DeviceInternalBuffer &vertexBuffer, const DeviceInternalBuffer &indexBuffer,
+                              const VkDescriptorSet &descriptorSet) {
   const auto d = device.getDevicePtr();
   vkWaitForFences(d, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
 
@@ -45,12 +48,14 @@ DrawStatus Frame::drawIndexed(const RenderPass &pass, const GraphicsPipeline &gr
 
   vkResetFences(d, 1, &inFlightFence);
 
+  frameCommandBuffer.resetCommandBuffer();
   std::vector<std::unique_ptr<ICommand>> commands{};
   commands.push_back(std::make_unique<StartRenderPassCommand>(frameCommandBuffer, imageIndex, pass, *frameBuffer,
                                                               swapChain->getSwapChainExtent()));
   commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(frameCommandBuffer, graphicsPipeline));
   commands.push_back(
       std::make_unique<SetupViewportScissorCommand>(frameCommandBuffer, swapChain->getSwapChainExtent()));
+  commands.push_back(std::make_unique<BindDescriptorSetCommand>(frameCommandBuffer, graphicsPipeline, descriptorSet));
   commands.push_back(std::make_unique<DrawIndexedCommand>(frameCommandBuffer, vertexBuffer, indexBuffer));
   commands.push_back(std::make_unique<StopRenderPassCommand>(frameCommandBuffer));
   frameCommandBuffer.recordCommandBuffer(commands);

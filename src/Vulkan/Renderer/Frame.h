@@ -11,7 +11,8 @@ public:
   Frame(const LogicalDevice &device, SwapChain *swapChain, FrameBuffer *frameBuffer, const CommandPool &pool);
   ~Frame();
   DrawStatus drawIndexed(const RenderPass &pass, const GraphicsPipeline &graphicsPipeline,
-                         const DeviceInternalBuffer &vertexBuffer, const DeviceInternalBuffer &indexBuffer);
+                         const DeviceInternalBuffer &vertexBuffer, const DeviceInternalBuffer &indexBuffer,
+                         const VkDescriptorSet &descriptorSet);
 
   void swapChainBuffer(SwapChain *chain, FrameBuffer *fBuffer);
 

@@ -39,6 +39,8 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Vulkan/Renderer/Commands/StartRenderPassCommand.cpp
         src/Vulkan/Renderer/Commands/BindCommandBufferToPipelineCommand.h
         src/Vulkan/Renderer/Commands/BindCommandBufferToPipelineCommand.cpp
+        src/Vulkan/Renderer/Commands/BindDescriptorSetCommand.h
+        src/Vulkan/Renderer/Commands/BindDescriptorSetCommand.cpp
         src/Vulkan/Renderer/Commands/SetupViewportScissorCommand.h
         src/Vulkan/Renderer/Commands/SetupViewportScissorCommand.cpp
         src/Vulkan/Renderer/Commands/StopRenderPassCommand.h
@@ -52,11 +54,17 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Vulkan/Renderer/Buffers/StagingBuffer.cpp
         src/Vulkan/Renderer/Buffers/DeviceInternalBuffer.h
         src/Vulkan/Renderer/Buffers/DeviceInternalBuffer.cpp
+        src/Vulkan/Renderer/Buffers/UniformBuffer.h
+        src/Vulkan/Renderer/Buffers/UniformBuffer.cpp
 
         src/Vulkan/Renderer/CommandBuffer.cpp
         src/Vulkan/Renderer/CommandBuffer.h
         src/Vulkan/Renderer/CommandPool.cpp
         src/Vulkan/Renderer/CommandPool.h
+        src/Vulkan/Renderer/DescriptorManager.cpp
+        src/Vulkan/Renderer/DescriptorManager.h
+        src/Vulkan/Renderer/DescriptorSetLayout.cpp
+        src/Vulkan/Renderer/DescriptorSetLayout.h
         src/Vulkan/Renderer/Frame.cpp
         src/Vulkan/Renderer/Frame.h
         src/Vulkan/Renderer/FrameBuffer.cpp

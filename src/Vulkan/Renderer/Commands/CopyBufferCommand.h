@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Buffers/AbstractBuffer.h"
 #include "../CommandBuffer.h"
 #include "ICommand.h"

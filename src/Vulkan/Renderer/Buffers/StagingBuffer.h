@@ -12,8 +12,6 @@ public:
   StagingBuffer(const LogicalDevice &device, const VkDeviceSize size, const size_t elementCount);
   virtual ~StagingBuffer();
 
-  void acquireData(const void *srcData);
-
 private:
   void *mappedDataHandlerPtr = nullptr;
 };
