@@ -70,5 +70,10 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp"
+    },
+    "[cpp]": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "xaver.clang-format"
     }
 }
