@@ -71,7 +71,9 @@
         "xtree": "cpp",
         "xutility": "cpp"
     },
-    "[cpp, h]": {
-        "editor.tabSize": 2
+    "[cpp]": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "xaver.clang-format"
     }
 }

@@ -6,6 +6,7 @@
 #include "./Buffers/StagingBuffer.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "Frame.h"
 #include "FrameBuffer.h"
 #include "GraphicsPipeline.h"
 #include "RenderPass.h"
@@ -23,9 +24,6 @@ public:
   void handleOuterFrameResize() { framebufferResized = true; };
 
 private:
-  void initCommandStructures();
-  void initSyncPrimitives();
-
   const LogicalDevice &device;
   const Surface &surface;
   GLFWwindow *window;
@@ -44,11 +42,7 @@ private:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
   uint32_t currentFrame = 0;
 
-  std::vector<VkSemaphore> imageAvailableSemaphores{MAX_FRAMES_IN_FLIGHT}; // VkSemaphore - only GPU waits for GPU, CPU
-                                                                           // is not locked
-  std::vector<VkSemaphore> renderFinishedSemaphores{MAX_FRAMES_IN_FLIGHT};
-  std::vector<VkFence> inFlightFences{MAX_FRAMES_IN_FLIGHT}; // fence - makes CPU wait for GPU
-  std::vector<CommandBuffer *> commandBuffers{MAX_FRAMES_IN_FLIGHT};
+  std::vector<std::unique_ptr<Frame>> frames{};
 
   bool framebufferResized = false;
 };

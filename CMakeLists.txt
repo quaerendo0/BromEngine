@@ -57,6 +57,8 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Vulkan/Renderer/CommandBuffer.h
         src/Vulkan/Renderer/CommandPool.cpp
         src/Vulkan/Renderer/CommandPool.h
+        src/Vulkan/Renderer/Frame.cpp
+        src/Vulkan/Renderer/Frame.h
         src/Vulkan/Renderer/FrameBuffer.cpp
         src/Vulkan/Renderer/FrameBuffer.h
         src/Vulkan/Renderer/GraphicsPipeline.cpp
