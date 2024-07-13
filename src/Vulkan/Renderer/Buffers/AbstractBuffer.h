@@ -14,8 +14,7 @@ public:
   size_t elementCount() const { return _elementCount; }
 
 protected:
-  AbstractBuffer(const LogicalDevice &device, VkBufferUsageFlags usage,
-                 VkDeviceSize size, size_t elementCount,
+  AbstractBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, VkDeviceSize size, size_t elementCount,
                  VkMemoryPropertyFlags properties);
   const LogicalDevice &device;
 

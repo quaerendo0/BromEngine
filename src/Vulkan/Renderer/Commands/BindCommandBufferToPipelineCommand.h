@@ -11,8 +11,7 @@ class CommandBuffer;
 
 class BindCommandBufferToPipelineCommand : public ICommand {
 public:
-  BindCommandBufferToPipelineCommand(CommandBuffer &buffer,
-                                     const GraphicsPipeline &pipeline);
+  BindCommandBufferToPipelineCommand(CommandBuffer &buffer, const GraphicsPipeline &pipeline);
   void execute() const override;
 
 private:

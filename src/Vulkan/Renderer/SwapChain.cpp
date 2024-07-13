@@ -6,8 +6,7 @@
 #include "../Surface.h"
 #include "SwapChain.h"
 
-VkSurfaceFormatKHR Vulkan::SwapChain::chooseSwapSurfaceFormat(
-    const std::vector<VkSurfaceFormatKHR> &availableFormats) {
+VkSurfaceFormatKHR Vulkan::SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {
   if (availableFormats.empty()) {
     VkSurfaceFormatKHR undefinedFormat{};
     return undefinedFormat;
@@ -23,8 +22,7 @@ VkSurfaceFormatKHR Vulkan::SwapChain::chooseSwapSurfaceFormat(
   return availableFormats[0];
 }
 
-VkPresentModeKHR Vulkan::SwapChain::chooseSwapPresentMode(
-    const std::vector<VkPresentModeKHR> &availablePresentModes) {
+VkPresentModeKHR Vulkan::SwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) {
   for (const auto &availablePresentMode : availablePresentModes) {
     if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
       return availablePresentMode;
@@ -34,56 +32,42 @@ VkPresentModeKHR Vulkan::SwapChain::chooseSwapPresentMode(
   return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D Vulkan::SwapChain::chooseSwapExtent(
-    const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow *window) {
-  if (capabilities.currentExtent.width !=
-      std::numeric_limits<uint32_t>::max()) {
+VkExtent2D Vulkan::SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow *window) {
+  if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
     return capabilities.currentExtent;
   } else {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 
-    VkExtent2D actualExtent = {static_cast<uint32_t>(width),
-                               static_cast<uint32_t>(height)};
+    VkExtent2D actualExtent = {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
 
     actualExtent.width =
-        std::clamp(actualExtent.width, capabilities.minImageExtent.width,
-                   capabilities.maxImageExtent.width);
+        std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
     actualExtent.height =
-        std::clamp(actualExtent.height, capabilities.minImageExtent.height,
-                   capabilities.maxImageExtent.height);
+        std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
     return actualExtent;
   }
 }
 
-bool surfaceFormatValid(VkSurfaceFormatKHR format) {
-  return format.format != VK_FORMAT_UNDEFINED;
-}
+bool surfaceFormatValid(VkSurfaceFormatKHR format) { return format.format != VK_FORMAT_UNDEFINED; }
 
-uint32_t Vulkan::SwapChain::initializeSwapChain(
-    const Vulkan::LogicalDevice &logicalDevice, const Surface &surface,
-    GLFWwindow *window, const Log::ILogger &logger) {
+uint32_t Vulkan::SwapChain::initializeSwapChain(const Vulkan::LogicalDevice &logicalDevice, const Surface &surface,
+                                                GLFWwindow *window, const Log::ILogger &logger) {
   auto physicalDevice = logicalDevice.getParentPhysicalDevice();
-  SwapChainSupportDetails swapChainSupport =
-      physicalDevice.getSwapChainSupport();
+  SwapChainSupportDetails swapChainSupport = physicalDevice.getSwapChainSupport();
 
-  VkSurfaceFormatKHR surfaceFormat =
-      chooseSwapSurfaceFormat(swapChainSupport.formats);
+  VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
   if (!surfaceFormatValid(surfaceFormat)) {
-    throw std::exception{
-        "SwapChain ctor - Cannot init surface, format is undefined"};
+    throw std::exception{"SwapChain ctor - Cannot init surface, format is undefined"};
   }
-  VkPresentModeKHR presentMode =
-      chooseSwapPresentMode(swapChainSupport.presentModes);
+  VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
   VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window);
-  uint32_t imageCount = swapChainSupport.capabilities.minImageCount +
-                        1; // just in case request +1 image
+  uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1; // just in case request +1 image
   // check if not overexceeding image count,
   // swapChainSupport.capabilities.maxImageCount == 0 means there is no max
   // limit
-  if (swapChainSupport.capabilities.maxImageCount > 0 &&
-      imageCount > swapChainSupport.capabilities.maxImageCount) {
+  if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
     imageCount = swapChainSupport.capabilities.maxImageCount;
   }
 
@@ -98,8 +82,7 @@ uint32_t Vulkan::SwapChain::initializeSwapChain(
   createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
   const auto indices = physicalDevice.getDeviceQueueFamiliesInfo();
-  uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(),
-                                   indices.presentFamily.value()};
+  uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
   if (indices.graphicsFamily != indices.presentFamily) {
     createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -117,8 +100,7 @@ uint32_t Vulkan::SwapChain::initializeSwapChain(
   createInfo.clipped = VK_TRUE;
   createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-  if (vkCreateSwapchainKHR(logicalDevice.getDevicePtr(), &createInfo, nullptr,
-                           &swapChain) != VK_SUCCESS) {
+  if (vkCreateSwapchainKHR(logicalDevice.getDevicePtr(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
     throw std::runtime_error("failed to create swap chain!");
   }
 
@@ -128,16 +110,12 @@ uint32_t Vulkan::SwapChain::initializeSwapChain(
   return imageCount;
 }
 
-void Vulkan::SwapChain::initializeImageViews(uint32_t imageCount,
-                                             const Log::ILogger &logger) {
-  vkGetSwapchainImagesKHR(logicalDevice.getDevicePtr(), swapChain, &imageCount,
-                          nullptr);
+void Vulkan::SwapChain::initializeImageViews(uint32_t imageCount, const Log::ILogger &logger) {
+  vkGetSwapchainImagesKHR(logicalDevice.getDevicePtr(), swapChain, &imageCount, nullptr);
   swapChainImages.resize(imageCount);
-  vkGetSwapchainImagesKHR(logicalDevice.getDevicePtr(), swapChain, &imageCount,
-                          swapChainImages.data());
+  vkGetSwapchainImagesKHR(logicalDevice.getDevicePtr(), swapChain, &imageCount, swapChainImages.data());
 
-  logger.logInfo("Swapchain created, buffer image count: " +
-                 std::to_string(imageCount));
+  logger.logInfo("Swapchain created, buffer image count: " + std::to_string(imageCount));
 
   swapChainImageViews.resize(swapChainImages.size());
   for (size_t i = 0; i < swapChainImages.size(); i++) {
@@ -156,15 +134,13 @@ void Vulkan::SwapChain::initializeImageViews(uint32_t imageCount,
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
 
-    if (vkCreateImageView(logicalDevice.getDevicePtr(), &createInfo, nullptr,
-                          &swapChainImageViews[i]) != VK_SUCCESS) {
+    if (vkCreateImageView(logicalDevice.getDevicePtr(), &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
       throw std::runtime_error("failed to create image views!");
     }
   }
 }
 
-Vulkan::SwapChain::SwapChain(const Vulkan::LogicalDevice &logicalDevice,
-                             const Surface &surface, GLFWwindow *window,
+Vulkan::SwapChain::SwapChain(const Vulkan::LogicalDevice &logicalDevice, const Surface &surface, GLFWwindow *window,
                              const Log::ILogger &logger)
     : logicalDevice{logicalDevice} {
   auto imageCount = initializeSwapChain(logicalDevice, surface, window, logger);

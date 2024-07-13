@@ -21,9 +21,7 @@ public:
 
   ~Instance();
 
-  [[nodiscard]] const VkInstance &getInstancePtr() const noexcept {
-    return instance;
-  }
+  [[nodiscard]] const VkInstance &getInstancePtr() const noexcept { return instance; }
 
 private:
   void createInstance(bool enableValidationLayers);

@@ -2,8 +2,7 @@
 #include <stdexcept>
 #include <vulkan/vulkan_core.h>
 
-Vulkan::RenderPass::RenderPass(const VkFormat swapChainImageFormat,
-                               const LogicalDevice &logicalDevice)
+Vulkan::RenderPass::RenderPass(const VkFormat swapChainImageFormat, const LogicalDevice &logicalDevice)
     : logicalDevice{logicalDevice} {
   VkAttachmentDescription colorAttachment{};
   colorAttachment.format = swapChainImageFormat;
@@ -41,12 +40,9 @@ Vulkan::RenderPass::RenderPass(const VkFormat swapChainImageFormat,
   renderPassInfo.dependencyCount = 1;
   renderPassInfo.pDependencies = &dependency;
 
-  if (vkCreateRenderPass(logicalDevice.getDevicePtr(), &renderPassInfo, nullptr,
-                         &renderPass) != VK_SUCCESS) {
+  if (vkCreateRenderPass(logicalDevice.getDevicePtr(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
     throw std::runtime_error("failed to create render pass!");
   }
 }
 
-Vulkan::RenderPass::~RenderPass() {
-  vkDestroyRenderPass(logicalDevice.getDevicePtr(), renderPass, nullptr);
-}
+Vulkan::RenderPass::~RenderPass() { vkDestroyRenderPass(logicalDevice.getDevicePtr(), renderPass, nullptr); }

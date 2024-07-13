@@ -10,8 +10,7 @@ enum InternalMemoryType { VertexBuffer, IndexBuffer };
 
 class DeviceInternalBuffer : public AbstractBuffer {
 public:
-  DeviceInternalBuffer(const LogicalDevice &device, InternalMemoryType type,
-                       VkDeviceSize size, size_t elementCount);
+  DeviceInternalBuffer(const LogicalDevice &device, InternalMemoryType type, VkDeviceSize size, size_t elementCount);
   virtual ~DeviceInternalBuffer();
 };
 } // namespace Vulkan

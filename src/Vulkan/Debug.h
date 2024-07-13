@@ -10,11 +10,9 @@ namespace Vulkan {
 
 class Debug {
 public:
-  static VkDebugUtilsMessengerCreateInfoEXT
-  populateDebugMessengerCreateInfo(const Log::ILogger &logger);
+  static VkDebugUtilsMessengerCreateInfoEXT populateDebugMessengerCreateInfo(const Log::ILogger &logger);
 
-  Debug(bool enableValidationLayers, const Instance &instance,
-        const Log::ILogger &logger);
+  Debug(bool enableValidationLayers, const Instance &instance, const Log::ILogger &logger);
 
   ~Debug();
 

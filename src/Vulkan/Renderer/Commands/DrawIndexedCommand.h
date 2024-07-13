@@ -9,8 +9,7 @@
 namespace Vulkan {
 class DrawIndexedCommand : public ICommand {
 public:
-  DrawIndexedCommand(CommandBuffer &buffer,
-                     const DeviceInternalBuffer &vertexBuffer,
+  DrawIndexedCommand(CommandBuffer &buffer, const DeviceInternalBuffer &vertexBuffer,
                      const DeviceInternalBuffer &indexBuffer)
       : vertexBuffer{vertexBuffer}, buffer{buffer}, indexBuffer{indexBuffer} {};
 
@@ -18,11 +17,8 @@ public:
     VkBuffer vertexBuffers[] = {vertexBuffer.getBufferHandle()};
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(buffer.getBuffer(), 0, 1, vertexBuffers, offsets);
-    vkCmdBindIndexBuffer(buffer.getBuffer(), indexBuffer.getBufferHandle(), 0,
-                         VK_INDEX_TYPE_UINT16);
-    vkCmdDrawIndexed(buffer.getBuffer(),
-                     static_cast<uint32_t>(indexBuffer.elementCount()), 1, 0, 0,
-                     0);
+    vkCmdBindIndexBuffer(buffer.getBuffer(), indexBuffer.getBufferHandle(), 0, VK_INDEX_TYPE_UINT16);
+    vkCmdDrawIndexed(buffer.getBuffer(), static_cast<uint32_t>(indexBuffer.elementCount()), 1, 0, 0, 0);
   };
 
 private:

@@ -10,13 +10,11 @@
 
 namespace Vulkan {
 
-void transferDataToGPU(const LogicalDevice &device, CommandPool *commandPool,
-                       const AbstractBuffer &srcBuffer,
+void transferDataToGPU(const LogicalDevice &device, CommandPool *commandPool, const AbstractBuffer &srcBuffer,
                        const AbstractBuffer &trgtBuffer) {
   CommandBuffer tempCopyCommandBuffer{device, *commandPool};
   std::vector<std::unique_ptr<ICommand>> commands{};
-  commands.push_back(std::make_unique<CopyBufferCommand>(
-      tempCopyCommandBuffer, srcBuffer, trgtBuffer));
+  commands.push_back(std::make_unique<CopyBufferCommand>(tempCopyCommandBuffer, srcBuffer, trgtBuffer));
   tempCopyCommandBuffer.recordCommandBuffer(commands);
 
   VkSubmitInfo submitInfo{};
@@ -24,21 +22,17 @@ void transferDataToGPU(const LogicalDevice &device, CommandPool *commandPool,
   submitInfo.commandBufferCount = 1;
   submitInfo.pCommandBuffers = &tempCopyCommandBuffer.getBuffer();
 
-  vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo,
-                VK_NULL_HANDLE);
+  vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo, VK_NULL_HANDLE);
   vkQueueWaitIdle(device.getGraphicsQueue().getQueue());
 
-  vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1,
-                       &tempCopyCommandBuffer.getBuffer());
+  vkFreeCommandBuffers(device.getDevicePtr(), commandPool->getCommandPool(), 1, &tempCopyCommandBuffer.getBuffer());
 }
 
-Renderer::Renderer(const LogicalDevice &device, const Surface &surface,
-                   GLFWwindow *window, const Log::ILogger &logger)
+Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger)
     : device{device}, surface{surface}, window{window}, logger{logger} {
   swapChain = new SwapChain{device, surface, window, logger};
   renderPass = new RenderPass{swapChain->getSwapChainImageFormat(), device};
-  graphicsPipeline = new GraphicsPipeline{
-      device, swapChain->getSwapChainExtent(), *renderPass};
+  graphicsPipeline = new GraphicsPipeline{device, swapChain->getSwapChainExtent(), *renderPass};
   frameBuffer = new FrameBuffer{*swapChain, *renderPass, device};
   initCommandStructures();
   initSyncPrimitives();
@@ -52,21 +46,16 @@ Renderer::Renderer(const LogicalDevice &device, const Surface &surface,
 
   const std::vector<uint16_t> indices = {0, 1, 2, 2, 3, 0};
 
-  StagingBuffer vertexStagingBuffer{device,
-                                    sizeof(vertices[0]) * vertices.size(),
-                                    vertices.size(), vertices.data()};
-  vertexBuffer = new DeviceInternalBuffer{
-      device, InternalMemoryType::VertexBuffer,
-      sizeof(vertices[0]) * vertices.size(), vertices.size()};
+  StagingBuffer vertexStagingBuffer{device, sizeof(vertices[0]) * vertices.size(), vertices.size(), vertices.data()};
+  vertexBuffer = new DeviceInternalBuffer{device, InternalMemoryType::VertexBuffer,
+                                          sizeof(vertices[0]) * vertices.size(), vertices.size()};
   transferDataToGPU(device, commandPool, vertexStagingBuffer, *vertexBuffer);
 
   /*--------------------------------*/
 
-  StagingBuffer indexStagingBuffer{device, sizeof(indices[0]) * indices.size(),
-                                   indices.size(), indices.data()};
-  indexBuffer = new DeviceInternalBuffer{
-      device, InternalMemoryType::IndexBuffer,
-      sizeof(indices[0]) * indices.size(), indices.size()};
+  StagingBuffer indexStagingBuffer{device, sizeof(indices[0]) * indices.size(), indices.size(), indices.data()};
+  indexBuffer = new DeviceInternalBuffer{device, InternalMemoryType::IndexBuffer, sizeof(indices[0]) * indices.size(),
+                                         indices.size()};
   transferDataToGPU(device, commandPool, indexStagingBuffer, *indexBuffer);
 }
 
@@ -81,10 +70,8 @@ Renderer::~Renderer() {
   delete commandPool;
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-    vkDestroySemaphore(device.getDevicePtr(), renderFinishedSemaphores[i],
-                       nullptr);
-    vkDestroySemaphore(device.getDevicePtr(), imageAvailableSemaphores[i],
-                       nullptr);
+    vkDestroySemaphore(device.getDevicePtr(), renderFinishedSemaphores[i], nullptr);
+    vkDestroySemaphore(device.getDevicePtr(), imageAvailableSemaphores[i], nullptr);
     vkDestroyFence(device.getDevicePtr(), inFlightFences[i], nullptr);
   }
 
@@ -117,9 +104,8 @@ void Renderer::drawFrame() {
   vkWaitForFences(d, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
   uint32_t imageIndex;
-  VkResult result = vkAcquireNextImageKHR(
-      d, swapChain->getSwapChain(), UINT64_MAX,
-      imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+  VkResult result = vkAcquireNextImageKHR(d, swapChain->getSwapChain(), UINT64_MAX,
+                                          imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
   if (result == VK_ERROR_OUT_OF_DATE_KHR) {
     recreateSwapChain();
     return;
@@ -131,23 +117,18 @@ void Renderer::drawFrame() {
 
   auto commandBuffer = *commandBuffers[currentFrame];
   std::vector<std::unique_ptr<ICommand>> commands{};
-  commands.push_back(std::make_unique<StartRenderPassCommand>(
-      commandBuffer, imageIndex, *renderPass, *frameBuffer,
-      swapChain->getSwapChainExtent()));
-  commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(
-      commandBuffer, *graphicsPipeline));
-  commands.push_back(std::make_unique<SetupViewportScissorCommand>(
-      commandBuffer, swapChain->getSwapChainExtent()));
-  commands.push_back(std::make_unique<DrawIndexedCommand>(
-      commandBuffer, *vertexBuffer, *indexBuffer));
+  commands.push_back(std::make_unique<StartRenderPassCommand>(commandBuffer, imageIndex, *renderPass, *frameBuffer,
+                                                              swapChain->getSwapChainExtent()));
+  commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(commandBuffer, *graphicsPipeline));
+  commands.push_back(std::make_unique<SetupViewportScissorCommand>(commandBuffer, swapChain->getSwapChainExtent()));
+  commands.push_back(std::make_unique<DrawIndexedCommand>(commandBuffer, *vertexBuffer, *indexBuffer));
   commands.push_back(std::make_unique<StopRenderPassCommand>(commandBuffer));
   commandBuffer.recordCommandBuffer(commands);
 
   VkSubmitInfo submitInfo{};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
   VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
-  VkPipelineStageFlags waitStages[] = {
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+  VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   submitInfo.waitSemaphoreCount = 1;
   submitInfo.pWaitSemaphores = waitSemaphores;
   submitInfo.pWaitDstStageMask = waitStages;
@@ -157,8 +138,7 @@ void Renderer::drawFrame() {
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
-  if (vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo,
-                    inFlightFences[currentFrame]) != VK_SUCCESS) {
+  if (vkQueueSubmit(device.getGraphicsQueue().getQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
     throw std::runtime_error("failed to submit draw command buffer!");
   }
 
@@ -172,8 +152,7 @@ void Renderer::drawFrame() {
   presentInfo.pImageIndices = &imageIndex;
 
   result = vkQueuePresentKHR(device.getPresentQueue().getQueue(), &presentInfo);
-  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
-      framebufferResized) {
+  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
     framebufferResized = false;
     recreateSwapChain();
   } else if (result != VK_SUCCESS) {
@@ -189,9 +168,7 @@ void Renderer::initCommandStructures() {
   const auto devicePtr = &device;
 
   std::for_each(commandBuffers.begin(), commandBuffers.end(),
-                [devicePtr, cp](CommandBuffer *&p) {
-                  p = new CommandBuffer{*devicePtr, *cp};
-                });
+                [devicePtr, cp](CommandBuffer *&p) { p = new CommandBuffer{*devicePtr, *cp}; });
 }
 
 void Renderer::initSyncPrimitives() {
@@ -203,15 +180,11 @@ void Renderer::initSyncPrimitives() {
   fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-    if (vkCreateSemaphore(device.getDevicePtr(), &semaphoreInfo, nullptr,
-                          &imageAvailableSemaphores[i]) != VK_SUCCESS ||
-        vkCreateSemaphore(device.getDevicePtr(), &semaphoreInfo, nullptr,
-                          &renderFinishedSemaphores[i]) != VK_SUCCESS ||
-        vkCreateFence(device.getDevicePtr(), &fenceInfo, nullptr,
-                      &inFlightFences[i]) != VK_SUCCESS) {
+    if (vkCreateSemaphore(device.getDevicePtr(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+        vkCreateSemaphore(device.getDevicePtr(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+        vkCreateFence(device.getDevicePtr(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
 
-      throw std::runtime_error(
-          "failed to create synchronization objects for a frame!");
+      throw std::runtime_error("failed to create synchronization objects for a frame!");
     }
   }
 }

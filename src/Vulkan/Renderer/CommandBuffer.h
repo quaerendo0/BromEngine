@@ -12,8 +12,7 @@ public:
   CommandBuffer(const LogicalDevice &device, const CommandPool &commandPool);
   ~CommandBuffer();
 
-  void
-  recordCommandBuffer(const std::vector<std::unique_ptr<ICommand>> &commands);
+  void recordCommandBuffer(const std::vector<std::unique_ptr<ICommand>> &commands);
   void resetCommandBuffer() const;
 
   const VkCommandBuffer &getBuffer() const noexcept { return commandBuffer; }

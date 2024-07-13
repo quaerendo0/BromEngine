@@ -12,9 +12,7 @@ namespace Vulkan {
 
 class GraphicsPipeline {
 public:
-  GraphicsPipeline(const LogicalDevice &logicalDevice,
-                   const VkExtent2D swapChainExtent,
-                   const RenderPass &renderPass);
+  GraphicsPipeline(const LogicalDevice &logicalDevice, const VkExtent2D swapChainExtent, const RenderPass &renderPass);
   ~GraphicsPipeline();
 
   const VkPipeline &getPipeline() const noexcept { return graphicsPipeline; }

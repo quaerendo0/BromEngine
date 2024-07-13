@@ -3,8 +3,7 @@
 #include "../CommandBuffer.h"
 #include "vulkan/vulkan.h"
 
-Vulkan::DrawCommand::DrawCommand(CommandBuffer &buffer,
-                                 const AbstractBuffer &stagingBuffer)
+Vulkan::DrawCommand::DrawCommand(CommandBuffer &buffer, const AbstractBuffer &stagingBuffer)
     : buffer{buffer}, stagingBuffer{stagingBuffer} {}
 
 void Vulkan::DrawCommand::execute() const {

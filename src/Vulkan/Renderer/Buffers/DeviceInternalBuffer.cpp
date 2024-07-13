@@ -17,12 +17,9 @@ const VkBufferUsageFlags getFlagsFromType(const InternalMemoryType type) {
   return flag;
 }
 
-DeviceInternalBuffer::DeviceInternalBuffer(const LogicalDevice &device,
-                                           InternalMemoryType type,
-                                           VkDeviceSize size,
+DeviceInternalBuffer::DeviceInternalBuffer(const LogicalDevice &device, InternalMemoryType type, VkDeviceSize size,
                                            size_t elementCount)
-    : AbstractBuffer{device, getFlagsFromType(type), size, elementCount,
-                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT} {}
+    : AbstractBuffer{device, getFlagsFromType(type), size, elementCount, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT} {}
 
 DeviceInternalBuffer::~DeviceInternalBuffer() {}
 } // namespace Vulkan

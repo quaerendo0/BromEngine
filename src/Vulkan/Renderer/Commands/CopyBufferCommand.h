@@ -5,8 +5,7 @@
 namespace Vulkan {
 class CopyBufferCommand : public ICommand {
 public:
-  CopyBufferCommand(CommandBuffer &buffer, const AbstractBuffer &srcBuffer,
-                    const AbstractBuffer &trgtBuffer);
+  CopyBufferCommand(CommandBuffer &buffer, const AbstractBuffer &srcBuffer, const AbstractBuffer &trgtBuffer);
   void execute() const override;
 
 private:

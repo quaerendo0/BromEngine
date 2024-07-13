@@ -30,23 +30,20 @@ static std::vector<char> readFile(const std::string &filename) {
  * an std::vector where the default allocator already ensures that the data
  * satisfies the worst case alignment requirements.
  */
-VkShaderModule createShaderModule(const std::vector<char> &code,
-                                  VkDevice device) {
+VkShaderModule createShaderModule(const std::vector<char> &code, VkDevice device) {
   VkShaderModuleCreateInfo createInfo{};
   createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
   createInfo.codeSize = code.size();
   createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
   VkShaderModule shaderModule;
-  if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) !=
-      VK_SUCCESS) {
+  if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
     throw std::runtime_error("failed to create shader module!");
   }
 
   return shaderModule;
 }
 
-std::vector<VkPipelineShaderStageCreateInfo>
-createShaderStages(VkDevice device) {
+std::vector<VkPipelineShaderStageCreateInfo> createShaderStages(VkDevice device) {
 
   auto vertShaderCode = readFile("./shaders/vert.spv");
   auto fragShaderCode = readFile("./shaders/frag.spv");
@@ -55,21 +52,18 @@ createShaderStages(VkDevice device) {
   VkShaderModule fragShaderModule = createShaderModule(fragShaderCode, device);
 
   VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
-  vertShaderStageInfo.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+  vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
   vertShaderStageInfo.module = vertShaderModule;
   vertShaderStageInfo.pName = "main";
 
   VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-  fragShaderStageInfo.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+  fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
   fragShaderStageInfo.module = fragShaderModule;
   fragShaderStageInfo.pName = "main";
 
-  std::vector<VkPipelineShaderStageCreateInfo> shaderStages{
-      vertShaderStageInfo, fragShaderStageInfo};
+  std::vector<VkPipelineShaderStageCreateInfo> shaderStages{vertShaderStageInfo, fragShaderStageInfo};
 
   return shaderStages;
 }
@@ -84,10 +78,8 @@ PipelineStateConfig createDynamicState() {
 
   config.dynamicStates = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
 
-  config.dynamicState.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-  config.dynamicState.dynamicStateCount =
-      static_cast<uint32_t>(config.dynamicStates.size());
+  config.dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+  config.dynamicState.dynamicStateCount = static_cast<uint32_t>(config.dynamicStates.size());
   config.dynamicState.pDynamicStates = config.dynamicStates.data();
 
   return config;
@@ -105,23 +97,19 @@ VertexConfig createVertexConfig() {
   vertexConfig.bindingDescription = Vertex::getBindingDescription();
   vertexConfig.attributeDescriptions = Vertex::getAttributeDescriptions();
 
-  vertexConfig.vertexInputInfo.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+  vertexConfig.vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
   vertexConfig.vertexInputInfo.vertexBindingDescriptionCount = 1;
   vertexConfig.vertexInputInfo.vertexAttributeDescriptionCount =
       static_cast<uint32_t>(vertexConfig.attributeDescriptions.size());
-  vertexConfig.vertexInputInfo.pVertexBindingDescriptions =
-      &vertexConfig.bindingDescription;
-  vertexConfig.vertexInputInfo.pVertexAttributeDescriptions =
-      vertexConfig.attributeDescriptions.data();
+  vertexConfig.vertexInputInfo.pVertexBindingDescriptions = &vertexConfig.bindingDescription;
+  vertexConfig.vertexInputInfo.pVertexAttributeDescriptions = vertexConfig.attributeDescriptions.data();
 
   return vertexConfig;
 }
 
 VkPipelineInputAssemblyStateCreateInfo getInputAssemblyConfig() {
   VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
-  inputAssembly.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+  inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
   inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   inputAssembly.primitiveRestartEnable = VK_FALSE;
 
@@ -146,8 +134,7 @@ ViewportConfig getViewportConfig(const VkExtent2D extent) {
   viewportConfig.scissor.offset = {0, 0};
   viewportConfig.scissor.extent = extent;
 
-  viewportConfig.viewportState.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+  viewportConfig.viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
   viewportConfig.viewportState.viewportCount = 1;
   viewportConfig.viewportState.pViewports = &viewportConfig.viewport;
   viewportConfig.viewportState.scissorCount = 1;
@@ -175,8 +162,7 @@ VkPipelineRasterizationStateCreateInfo getRasterizerConfig() {
 
 VkPipelineMultisampleStateCreateInfo getMultisamplingConfig() {
   VkPipelineMultisampleStateCreateInfo multisampling{};
-  multisampling.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+  multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
   multisampling.sampleShadingEnable = VK_FALSE;
   multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
   multisampling.minSampleShading = 1.0f;          // Optional
@@ -196,22 +182,16 @@ ColorBlendConfig getColorBlendingConfig() {
   ColorBlendConfig config{};
 
   config.colorBlendAttachment.colorWriteMask =
-      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
   config.colorBlendAttachment.blendEnable = VK_FALSE;
-  config.colorBlendAttachment.srcColorBlendFactor =
-      VK_BLEND_FACTOR_ONE; // Optional
-  config.colorBlendAttachment.dstColorBlendFactor =
-      VK_BLEND_FACTOR_ZERO;                                   // Optional
-  config.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD; // Optional
-  config.colorBlendAttachment.srcAlphaBlendFactor =
-      VK_BLEND_FACTOR_ONE; // Optional
-  config.colorBlendAttachment.dstAlphaBlendFactor =
-      VK_BLEND_FACTOR_ZERO;                                   // Optional
-  config.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
+  config.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;  // Optional
+  config.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+  config.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;             // Optional
+  config.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;  // Optional
+  config.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+  config.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;             // Optional
 
-  config.colorBlending.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+  config.colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
   config.colorBlending.logicOpEnable = VK_FALSE;
   config.colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
   config.colorBlending.attachmentCount = 1;
@@ -235,8 +215,7 @@ VkPipelineLayoutCreateInfo getPipelineLayoutInfoConfig() {
   return pipelineLayoutInfo;
 }
 
-GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice,
-                                   const VkExtent2D swapChainExtent,
+GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice, const VkExtent2D swapChainExtent,
                                    const RenderPass &renderPass)
     : logicalDevice{logicalDevice} {
   const auto device = logicalDevice.getDevicePtr();
@@ -251,8 +230,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice,
   const auto colorBlending = getColorBlendingConfig();
   const auto pipelineLayoutInfo = getPipelineLayoutInfoConfig();
 
-  if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr,
-                             &pipelineLayout) != VK_SUCCESS) {
+  if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
     throw std::runtime_error("failed to create pipeline layout!");
   }
 
@@ -274,8 +252,7 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice,
   pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
   pipelineInfo.basePipelineIndex = -1;              // Optional
 
-  if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo,
-                                nullptr, &graphicsPipeline) != VK_SUCCESS) {
+  if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
     throw std::runtime_error("failed to create graphics pipeline!");
   }
 
@@ -286,7 +263,6 @@ GraphicsPipeline::GraphicsPipeline(const LogicalDevice &logicalDevice,
 
 GraphicsPipeline::~GraphicsPipeline() {
   vkDestroyPipeline(logicalDevice.getDevicePtr(), graphicsPipeline, nullptr);
-  vkDestroyPipelineLayout(logicalDevice.getDevicePtr(), pipelineLayout,
-                          nullptr);
+  vkDestroyPipelineLayout(logicalDevice.getDevicePtr(), pipelineLayout, nullptr);
 }
 } // namespace Vulkan

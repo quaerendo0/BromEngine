@@ -3,16 +3,14 @@
 #include "CommandBuffer.h"
 
 namespace Vulkan {
-CommandBuffer::CommandBuffer(const LogicalDevice &device,
-                             const CommandPool &commandPool) {
+CommandBuffer::CommandBuffer(const LogicalDevice &device, const CommandPool &commandPool) {
   VkCommandBufferAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
   allocInfo.commandPool = commandPool.getCommandPool();
   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   allocInfo.commandBufferCount = 1;
 
-  if (vkAllocateCommandBuffers(device.getDevicePtr(), &allocInfo,
-                               &commandBuffer) != VK_SUCCESS) {
+  if (vkAllocateCommandBuffers(device.getDevicePtr(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
     throw std::runtime_error("failed to allocate command buffers!");
   }
 }
@@ -36,8 +34,7 @@ void CommandBuffer::stopRecordingCommands() const {
   }
 }
 
-void CommandBuffer::recordCommandBuffer(
-    const std::vector<std::unique_ptr<ICommand>> &commands) {
+void CommandBuffer::recordCommandBuffer(const std::vector<std::unique_ptr<ICommand>> &commands) {
   beginRecordingCommands();
   for (const auto &command : commands) {
     command->execute();
@@ -45,7 +42,5 @@ void CommandBuffer::recordCommandBuffer(
   stopRecordingCommands();
 }
 
-void CommandBuffer::resetCommandBuffer() const {
-  vkResetCommandBuffer(commandBuffer, 0);
-}
+void CommandBuffer::resetCommandBuffer() const { vkResetCommandBuffer(commandBuffer, 0); }
 } // namespace Vulkan

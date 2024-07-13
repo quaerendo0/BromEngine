@@ -4,27 +4,22 @@
 
 namespace Vulkan {
 
-const std::vector<const char *> Instance::validationLayers = {
-    "VK_LAYER_KHRONOS_validation"};
+const std::vector<const char *> Instance::validationLayers = {"VK_LAYER_KHRONOS_validation"};
 
-Instance::Instance(bool enableValidationLayers, const Log::ILogger &logger)
-    : logger{logger} {
+Instance::Instance(bool enableValidationLayers, const Log::ILogger &logger) : logger{logger} {
   createInstance(enableValidationLayers);
 }
 
 Instance::~Instance() { vkDestroyInstance(instance, nullptr); }
 
-std::vector<const char *> getRequiredExtensions(bool enableValidationLayers,
-                                                const Log::ILogger &logger) {
+std::vector<const char *> getRequiredExtensions(bool enableValidationLayers, const Log::ILogger &logger) {
   uint32_t glfwExtensionCount = 0;
   const char **glfwExtensions;
   glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-  std::vector<const char *> extensions(glfwExtensions,
-                                       glfwExtensions + glfwExtensionCount);
+  std::vector<const char *> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-  Log::prettyLog("Required extensions", extensions.begin(), extensions.end(),
-                 logger, Log::Info);
+  Log::prettyLog("Required extensions", extensions.begin(), extensions.end(), logger, Log::Info);
   if (enableValidationLayers) {
     extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
   }
@@ -39,8 +34,7 @@ bool checkValidationLayerSupport() {
   std::vector<VkLayerProperties> availableLayers(layerCount);
   vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-  std::set<std::string> requiredLayers{Instance::validationLayers.begin(),
-                                       Instance::validationLayers.end()};
+  std::set<std::string> requiredLayers{Instance::validationLayers.begin(), Instance::validationLayers.end()};
   for (const auto &layer : availableLayers) {
     requiredLayers.erase(layer.layerName);
   }
@@ -71,8 +65,7 @@ void Instance::createInstance(bool enableValidationLayers) {
 
   VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
   if (enableValidationLayers) {
-    createInfo.enabledLayerCount =
-        static_cast<uint32_t>(validationLayers.size());
+    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
     createInfo.ppEnabledLayerNames = validationLayers.data();
 
     debugCreateInfo = Debug::populateDebugMessengerCreateInfo(logger);

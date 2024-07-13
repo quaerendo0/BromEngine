@@ -4,14 +4,13 @@
 
 namespace Vulkan {
 
-std::vector<VkDeviceQueueCreateInfo> generateVkDeviceQueueCreateInfoStructs(
-    const PhysicalDevice &physicalDevice,
-    PhysicalDeviceQueueFamilyIndexInfo familiesIndexes) {
+std::vector<VkDeviceQueueCreateInfo>
+generateVkDeviceQueueCreateInfoStructs(const PhysicalDevice &physicalDevice,
+                                       PhysicalDeviceQueueFamilyIndexInfo familiesIndexes) {
 
   std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-  std::set<uint32_t> uniqueQueueFamilies = {
-      familiesIndexes.graphicsFamily.value(),
-      familiesIndexes.presentFamily.value()};
+  std::set<uint32_t> uniqueQueueFamilies = {familiesIndexes.graphicsFamily.value(),
+                                            familiesIndexes.presentFamily.value()};
 
   float queuePriority = 1.0f;
   for (uint32_t queueFamily : uniqueQueueFamilies) {
@@ -26,28 +25,23 @@ std::vector<VkDeviceQueueCreateInfo> generateVkDeviceQueueCreateInfoStructs(
   return queueCreateInfos;
 }
 
-VkPhysicalDeviceFeatures generateVkPhysicalDeviceFeaturesStruct() {
-  return VkPhysicalDeviceFeatures{};
-}
+VkPhysicalDeviceFeatures generateVkPhysicalDeviceFeaturesStruct() { return VkPhysicalDeviceFeatures{}; }
 
-VkDeviceCreateInfo generateVkDeviceCreateInfoStruct(
-    const std::vector<VkDeviceQueueCreateInfo> &queueCreateInfos,
-    const VkPhysicalDeviceFeatures *features, bool enableValidationLayers,
-    const std::vector<const char *> &validationLayers) {
+VkDeviceCreateInfo generateVkDeviceCreateInfoStruct(const std::vector<VkDeviceQueueCreateInfo> &queueCreateInfos,
+                                                    const VkPhysicalDeviceFeatures *features,
+                                                    bool enableValidationLayers,
+                                                    const std::vector<const char *> &validationLayers) {
   VkDeviceCreateInfo createInfo{};
 
   createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   createInfo.pQueueCreateInfos = queueCreateInfos.data();
-  createInfo.queueCreateInfoCount =
-      static_cast<uint32_t>(queueCreateInfos.size());
+  createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
   createInfo.pEnabledFeatures = features;
-  createInfo.enabledExtensionCount =
-      static_cast<uint32_t>(PhysicalDevice::deviceExtensions.size());
+  createInfo.enabledExtensionCount = static_cast<uint32_t>(PhysicalDevice::deviceExtensions.size());
   createInfo.ppEnabledExtensionNames = PhysicalDevice::deviceExtensions.data();
 
   if (enableValidationLayers) {
-    createInfo.enabledLayerCount =
-        static_cast<uint32_t>(validationLayers.size());
+    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
     createInfo.ppEnabledLayerNames = validationLayers.data();
   } else {
     createInfo.enabledLayerCount = 0;
@@ -56,27 +50,21 @@ VkDeviceCreateInfo generateVkDeviceCreateInfoStruct(
   return createInfo;
 }
 
-LogicalDevice::LogicalDevice(const PhysicalDevice &physicalDevice,
-                             const std::vector<const char *> &validationLayers,
+LogicalDevice::LogicalDevice(const PhysicalDevice &physicalDevice, const std::vector<const char *> &validationLayers,
                              bool enableValidationLayers)
     : physicalDevice{physicalDevice} {
   const auto familiesIndices = physicalDevice.getDeviceQueueFamiliesInfo();
-  const auto queueCreateInfos =
-      generateVkDeviceQueueCreateInfoStructs(physicalDevice, familiesIndices);
+  const auto queueCreateInfos = generateVkDeviceQueueCreateInfoStructs(physicalDevice, familiesIndices);
   const auto deviceFeatures = generateVkPhysicalDeviceFeaturesStruct();
-  const auto createInfo = generateVkDeviceCreateInfoStruct(
-      queueCreateInfos, &deviceFeatures, enableValidationLayers,
-      validationLayers);
+  const auto createInfo =
+      generateVkDeviceCreateInfoStruct(queueCreateInfos, &deviceFeatures, enableValidationLayers, validationLayers);
 
-  if (vkCreateDevice(physicalDevice.getPhysicalDevicePtr(), &createInfo,
-                     nullptr, &device) != VK_SUCCESS) {
+  if (vkCreateDevice(physicalDevice.getPhysicalDevicePtr(), &createInfo, nullptr, &device) != VK_SUCCESS) {
     throw std::runtime_error("failed to create logical device!");
   }
 
-  const auto graphIndex =
-      physicalDevice.getDeviceQueueFamiliesInfo().graphicsFamily.value();
-  const auto presentIndex =
-      physicalDevice.getDeviceQueueFamiliesInfo().presentFamily.value();
+  const auto graphIndex = physicalDevice.getDeviceQueueFamiliesInfo().graphicsFamily.value();
+  const auto presentIndex = physicalDevice.getDeviceQueueFamiliesInfo().presentFamily.value();
   graphicsQueue = std::make_unique<Queue>(device, graphIndex);
   presentQueue = std::make_unique<Queue>(device, presentIndex);
 }

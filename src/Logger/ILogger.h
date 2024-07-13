@@ -32,8 +32,7 @@ concept ConvetribleToString = requires(T a) {
 };
 
 template <StringLike T>
-void prettyLog(const std::string &collectionName, T begin, T end,
-               const ILogger &logger, LogLevel level) {
+void prettyLog(const std::string &collectionName, T begin, T end, const ILogger &logger, LogLevel level) {
   unsigned int count = 0;
   std::string out{};
   while (begin != end) {
@@ -41,14 +40,12 @@ void prettyLog(const std::string &collectionName, T begin, T end,
     count++;
     begin++;
   }
-  out =
-      collectionName + " (total " + std::to_string(count) + ") { " + out + " }";
+  out = collectionName + " (total " + std::to_string(count) + ") { " + out + " }";
   logger.log(level, out);
 }
 
 template <ConvetribleToString T>
-void prettyLog(const std::string &collectionName, T begin, T end,
-               const ILogger &logger, LogLevel level) {
+void prettyLog(const std::string &collectionName, T begin, T end, const ILogger &logger, LogLevel level) {
   unsigned int count = 0;
   std::string out{};
   while (begin != end) {
@@ -56,8 +53,7 @@ void prettyLog(const std::string &collectionName, T begin, T end,
     count++;
     begin++;
   }
-  out =
-      collectionName + " (total " + std::to_string(count) + ") { " + out + " }";
+  out = collectionName + " (total " + std::to_string(count) + ") { " + out + " }";
   logger.log(level, out);
 }
 } // namespace Log

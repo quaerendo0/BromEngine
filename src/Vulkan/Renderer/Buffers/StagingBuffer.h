@@ -8,10 +8,8 @@
 namespace Vulkan {
 class StagingBuffer : public AbstractBuffer {
 public:
-  StagingBuffer(const LogicalDevice &device, const VkDeviceSize size,
-                const size_t elementCount, const void *srcData);
-  StagingBuffer(const LogicalDevice &device, const VkDeviceSize size,
-                const size_t elementCount);
+  StagingBuffer(const LogicalDevice &device, const VkDeviceSize size, const size_t elementCount, const void *srcData);
+  StagingBuffer(const LogicalDevice &device, const VkDeviceSize size, const size_t elementCount);
   virtual ~StagingBuffer();
 
   void acquireData(const void *srcData);

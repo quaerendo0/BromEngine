@@ -11,8 +11,8 @@
 namespace Vulkan {
 class SwapChain {
 public:
-  SwapChain(const Vulkan::LogicalDevice &logicalDevice, const Surface &surface,
-            GLFWwindow *window, const Log::ILogger &logger);
+  SwapChain(const Vulkan::LogicalDevice &logicalDevice, const Surface &surface, GLFWwindow *window,
+            const Log::ILogger &logger);
 
   ~SwapChain();
 
@@ -21,37 +21,24 @@ public:
   // are used for color For example, B8G8R8A8 - r, g, b, alpha channel - 8 bits
   // for each If collection is empty or not found suitable, returns undefined
   // format.
-  static VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-      const std::vector<VkSurfaceFormatKHR> &availableFormats);
+  static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);
 
   // Picks presentation mode, preferred "mailbox", otherwise FIFO
   // How images are pushed to view, immediate/FIFO/relaxed fifo/mailbox (images
   // in queue replaced)
-  static VkPresentModeKHR chooseSwapPresentMode(
-      const std::vector<VkPresentModeKHR> &availablePresentModes);
+  static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
 
   // Gets current swapchain image "extent"
   // Extent - width + height, but they may not correspond to pixels
-  static VkExtent2D
-  chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities,
-                   GLFWwindow *window);
+  static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow *window);
 
-  [[nodiscard]] const VkExtent2D &getSwapChainExtent() const noexcept {
-    return swapChainExtent;
-  }
+  [[nodiscard]] const VkExtent2D &getSwapChainExtent() const noexcept { return swapChainExtent; }
 
-  [[nodiscard]] const VkFormat &getSwapChainImageFormat() const noexcept {
-    return swapChainImageFormat;
-  }
+  [[nodiscard]] const VkFormat &getSwapChainImageFormat() const noexcept { return swapChainImageFormat; }
 
-  [[nodiscard]] const std::vector<VkImageView> &
-  getSwapChainImageViews() const noexcept {
-    return swapChainImageViews;
-  }
+  [[nodiscard]] const std::vector<VkImageView> &getSwapChainImageViews() const noexcept { return swapChainImageViews; }
 
-  [[nodiscard]] const VkSwapchainKHR &getSwapChain() const noexcept {
-    return swapChain;
-  }
+  [[nodiscard]] const VkSwapchainKHR &getSwapChain() const noexcept { return swapChain; }
 
 private:
   VkSwapchainKHR swapChain;
@@ -63,8 +50,7 @@ private:
   VkFormat swapChainImageFormat;
   VkExtent2D swapChainExtent;
 
-  uint32_t initializeSwapChain(const LogicalDevice &logicalDevice,
-                               const Surface &surface, GLFWwindow *window,
+  uint32_t initializeSwapChain(const LogicalDevice &logicalDevice, const Surface &surface, GLFWwindow *window,
                                const Log::ILogger &logger);
 
   void initializeImageViews(uint32_t imageCount, const Log::ILogger &logger);

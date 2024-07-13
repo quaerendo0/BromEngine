@@ -2,8 +2,7 @@
 
 #include "SetupViewportScissorCommand.h"
 
-Vulkan::SetupViewportScissorCommand::SetupViewportScissorCommand(
-    CommandBuffer &buffer, const VkExtent2D &extent)
+Vulkan::SetupViewportScissorCommand::SetupViewportScissorCommand(CommandBuffer &buffer, const VkExtent2D &extent)
     : buffer{buffer}, extent{extent} {}
 
 void Vulkan::SetupViewportScissorCommand::execute() const {

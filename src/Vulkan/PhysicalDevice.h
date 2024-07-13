@@ -16,15 +16,11 @@ class PhysicalDevice {
 public:
   static const std::vector<const char *> deviceExtensions;
 
-  PhysicalDevice(const VkInstance &inst, const VkSurfaceKHR &surface,
-                 const Log::ILogger &logger);
+  PhysicalDevice(const VkInstance &inst, const VkSurfaceKHR &surface, const Log::ILogger &logger);
 
-  [[nodiscard]] const VkPhysicalDevice &getPhysicalDevicePtr() const {
-    return physicalDevice;
-  }
+  [[nodiscard]] const VkPhysicalDevice &getPhysicalDevicePtr() const { return physicalDevice; }
 
-  [[nodiscard]] PhysicalDeviceQueueFamilyIndexInfo
-  getDeviceQueueFamiliesInfo() const;
+  [[nodiscard]] PhysicalDeviceQueueFamilyIndexInfo getDeviceQueueFamiliesInfo() const;
 
   SwapChainSupportDetails getSwapChainSupport();
 
