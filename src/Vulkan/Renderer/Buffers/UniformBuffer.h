@@ -9,7 +9,7 @@ public:
   UniformBuffer(const LogicalDevice &device);
   virtual ~UniformBuffer();
 
-  void acquireData(const void *srcData);
+  void acquireData(const void *srcData) const;
 
 private:
   void *mappedDataHandlerPtr = nullptr;

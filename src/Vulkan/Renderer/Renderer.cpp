@@ -7,6 +7,7 @@
 #include "Commands/StartRenderPassCommand.h"
 #include "Commands/StopRenderPassCommand.h"
 #include <algorithm>
+#include <chrono>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
@@ -32,6 +33,20 @@ void transferDataToGPU(const LogicalDevice &device, CommandPool *commandPool, co
 
 void initVerticesIndicesUbos(const LogicalDevice &device, CommandPool *commandPool) {}
 
+void updateUniformBuffer(uint32_t currentImage, const VkExtent2D &extent, const UniformBuffer &uniformBuffer) {
+  static auto startTime = std::chrono::high_resolution_clock::now();
+
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+  UniformBufferObject ubo{};
+  ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.proj = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
+  ubo.proj[1][1] *= -1;
+  uniformBuffer.acquireData(&ubo);
+}
+
 Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger)
     : device{device}, surface{surface}, window{window}, logger{logger} {
 
@@ -44,7 +59,7 @@ Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwind
   commandPool = new CommandPool{device};
 
   UniformBufferObject ubo{};
-  ubo.model = glm::rotate(glm::mat4(1.0f), 0 * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.model = glm::rotate(glm::mat4(1.0f), 3 * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   ubo.proj = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
   ubo.proj[1][1] *= -1;
@@ -114,7 +129,7 @@ void Renderer::recreateSwapChain() {
 
 void Renderer::drawFrame() {
   auto &frame = frames.at(currentFrame);
-
+  updateUniformBuffer(currentFrame, swapChain->getSwapChainExtent(), *uniformBuffers.at(currentFrame));
   const auto result = frame->drawIndexed(*renderPass, *graphicsPipeline, *vertexBuffer, *indexBuffer,
                                          descriptorManager->getDescriptorSets().at(currentFrame));
   if (result == DrawStatus::fucked || framebufferResized) {

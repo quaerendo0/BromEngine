@@ -8,4 +8,6 @@ Vulkan::UniformBuffer::UniformBuffer(const LogicalDevice &device)
 
 Vulkan::UniformBuffer::~UniformBuffer() { vkUnmapMemory(device.getDevicePtr(), bufferMemory); }
 
-void Vulkan::UniformBuffer::acquireData(const void *srcData) { memcpy(mappedDataHandlerPtr, srcData, (size_t)_size); }
+void Vulkan::UniformBuffer::acquireData(const void *srcData) const {
+  memcpy(mappedDataHandlerPtr, srcData, (size_t)_size);
+}
