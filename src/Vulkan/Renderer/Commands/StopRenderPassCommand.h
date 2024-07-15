@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Buffers/StagingBuffer.h"
 #include "../CommandBuffer.h"
 #include "ICommand.h"
 
@@ -11,7 +10,7 @@ class CommandBuffer;
 class StopRenderPassCommand : public ICommand {
 public:
   StopRenderPassCommand(CommandBuffer &buffer);
-  void execute() const override;
+  void enqueue() const override;
 
 private:
   CommandBuffer &buffer;

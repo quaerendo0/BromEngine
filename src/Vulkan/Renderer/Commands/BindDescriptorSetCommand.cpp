@@ -5,7 +5,7 @@ BindDescriptorSetCommand::BindDescriptorSetCommand(CommandBuffer &buffer, const 
                                                    const VkDescriptorSet &descriptorSet)
     : buffer{buffer}, graphicsPipeline{graphicsPipeline}, descriptorSet{descriptorSet} {}
 
-void BindDescriptorSetCommand::execute() const {
+void BindDescriptorSetCommand::enqueue() const {
   vkCmdBindDescriptorSets(buffer.getBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getPipelineLayout(), 0,
                           1, &descriptorSet, 0, nullptr);
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Buffers/StagingBuffer.h"
 #include "../CommandBuffer.h"
 #include "../FrameBuffer.h"
 #include "../RenderPass.h"
@@ -14,7 +13,7 @@ class StartRenderPassCommand : public ICommand {
 public:
   StartRenderPassCommand(CommandBuffer &buffer, uint32_t imageIndex, const RenderPass &renderPass,
                          const FrameBuffer &frameBuffer, const VkExtent2D &extent);
-  void execute() const override;
+  void enqueue() const override;
 
 private:
   uint32_t imageIndex;

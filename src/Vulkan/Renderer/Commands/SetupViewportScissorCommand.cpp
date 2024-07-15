@@ -5,7 +5,7 @@
 Vulkan::SetupViewportScissorCommand::SetupViewportScissorCommand(CommandBuffer &buffer, const VkExtent2D &extent)
     : buffer{buffer}, extent{extent} {}
 
-void Vulkan::SetupViewportScissorCommand::execute() const {
+void Vulkan::SetupViewportScissorCommand::enqueue() const {
   VkViewport viewport{};
   viewport.x = 0.0f;
   viewport.y = 0.0f;

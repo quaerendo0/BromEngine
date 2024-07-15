@@ -1,0 +1,1 @@
+Get-ChildItem -Path ./src -File -Recurse | foreach { Resolve-Path -Path $_.FullName -Relative } | foreach { $_ -replace "\\","/" } | Out-File ./soures.txt

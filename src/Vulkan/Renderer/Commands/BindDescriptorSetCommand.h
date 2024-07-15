@@ -4,13 +4,12 @@
 #include "../GraphicsPipeline.h"
 #include "ICommand.h"
 
-
 namespace Vulkan {
 class BindDescriptorSetCommand : public ICommand {
 public:
   BindDescriptorSetCommand(CommandBuffer &buffer, const GraphicsPipeline &graphicsPipeline,
                            const VkDescriptorSet &descriptorSet);
-  void execute() const override;
+  void enqueue() const override;
 
 private:
   const GraphicsPipeline &graphicsPipeline;

@@ -1,26 +1,25 @@
 #pragma once
 
-#include "../../Geometry/Vertex.h"
 #include "../../LogicalDevice.h"
+#include "IBuffer.h"
 #include <vector>
 
 namespace Vulkan {
-class AbstractBuffer {
+class BasicBuffer : IBuffer {
 public:
-  virtual ~AbstractBuffer();
+  BasicBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+              VkDeviceSize size);
+  virtual ~BasicBuffer();
 
+  const VkDeviceMemory &getBufferMemoryHandle() const { return bufferMemory; }
   const VkBuffer &getBufferHandle() const { return bufferHandle; }
   VkDeviceSize size() const { return _size; }
-  size_t elementCount() const { return _elementCount; }
 
 protected:
-  AbstractBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, VkDeviceSize size, size_t elementCount,
-                 VkMemoryPropertyFlags properties);
   const LogicalDevice &device;
 
   VkBuffer bufferHandle;
   VkDeviceMemory bufferMemory;
-  size_t _elementCount;
   VkDeviceSize _size;
 };
 } // namespace Vulkan

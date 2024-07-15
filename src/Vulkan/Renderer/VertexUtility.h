@@ -1,18 +1,16 @@
 #pragma once
 
+#include "../../Game/Geometry/Vertex.h"
+#include "vulkan/vulkan.h"
 #include <array>
-#include <glm/glm.hpp>
-#include <vulkan/vulkan_core.h>
 
 namespace Vulkan {
-struct Vertex {
-  glm::vec2 pos;
-  glm::vec3 color;
-
+class VertexUtilities {
+public:
   static VkVertexInputBindingDescription getBindingDescription() {
     VkVertexInputBindingDescription bindingDescription{};
     bindingDescription.binding = 0;
-    bindingDescription.stride = sizeof(Vertex);
+    bindingDescription.stride = sizeof(BromEngine::Geometry::Vertex);
     bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     return bindingDescription;
   }
@@ -20,6 +18,7 @@ struct Vertex {
   static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
     std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
 
+    using namespace BromEngine::Geometry;
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].location = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;

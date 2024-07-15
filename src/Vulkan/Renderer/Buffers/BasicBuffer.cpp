@@ -1,4 +1,4 @@
-#include "AbstractBuffer.h"
+#include "BasicBuffer.h"
 
 #include "vulkan/vulkan.h"
 #include <stdexcept>
@@ -16,11 +16,10 @@ uint32_t findMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPr
   throw std::runtime_error("failed to find suitable memory type!");
 }
 
-Vulkan::AbstractBuffer::AbstractBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, VkDeviceSize size,
-                                       size_t elementCount, VkMemoryPropertyFlags properties)
+Vulkan::BasicBuffer::BasicBuffer(const LogicalDevice &device, VkBufferUsageFlags usage,
+                                 VkMemoryPropertyFlags properties, VkDeviceSize size)
     : device{device} {
   _size = size;
-  _elementCount = elementCount;
 
   VkBufferCreateInfo bufferInfo{};
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -48,7 +47,7 @@ Vulkan::AbstractBuffer::AbstractBuffer(const LogicalDevice &device, VkBufferUsag
   vkBindBufferMemory(device.getDevicePtr(), bufferHandle, bufferMemory, 0);
 }
 
-Vulkan::AbstractBuffer::~AbstractBuffer() {
+Vulkan::BasicBuffer::~BasicBuffer() {
   vkDestroyBuffer(device.getDevicePtr(), bufferHandle, nullptr);
   vkFreeMemory(device.getDevicePtr(), bufferMemory, nullptr);
 }

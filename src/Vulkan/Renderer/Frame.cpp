@@ -6,7 +6,6 @@
 #include "Commands/StartRenderPassCommand.h"
 #include "Commands/StopRenderPassCommand.h"
 
-
 namespace Vulkan {
 Frame::Frame(const LogicalDevice &device, SwapChain *swapChain, FrameBuffer *frameBuffer, const CommandPool &pool)
     : device{device}, swapChain{swapChain}, frameBuffer{frameBuffer}, frameCommandBuffer{device, pool} {
@@ -32,7 +31,7 @@ Frame::~Frame() {
 }
 
 DrawStatus Frame::drawIndexed(const RenderPass &pass, const GraphicsPipeline &graphicsPipeline,
-                              const DeviceInternalBuffer &vertexBuffer, const DeviceInternalBuffer &indexBuffer,
+                              const VertexBuffer &vertexBuffer, const IndexBuffer &indexBuffer,
                               const VkDescriptorSet &descriptorSet) {
   const auto d = device.getDevicePtr();
   vkWaitForFences(d, 1, &inFlightFence, VK_TRUE, UINT64_MAX);

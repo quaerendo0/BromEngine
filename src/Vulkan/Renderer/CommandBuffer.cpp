@@ -37,7 +37,7 @@ void CommandBuffer::stopRecordingCommands() const {
 void CommandBuffer::recordCommandBuffer(const std::vector<std::unique_ptr<ICommand>> &commands) {
   beginRecordingCommands();
   for (const auto &command : commands) {
-    command->execute();
+    command->enqueue();
   }
   stopRecordingCommands();
 }

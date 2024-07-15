@@ -1,6 +1,6 @@
 #include "GraphicsPipeline.h"
 
-#include "../Geometry/Vertex.h"
+#include "VertexUtility.h"
 
 namespace Vulkan {
 
@@ -94,8 +94,8 @@ struct VertexConfig {
 VertexConfig createVertexConfig() {
   VertexConfig vertexConfig{};
 
-  vertexConfig.bindingDescription = Vertex::getBindingDescription();
-  vertexConfig.attributeDescriptions = Vertex::getAttributeDescriptions();
+  vertexConfig.bindingDescription = VertexUtilities::getBindingDescription();
+  vertexConfig.attributeDescriptions = VertexUtilities::getAttributeDescriptions();
 
   vertexConfig.vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
   vertexConfig.vertexInputInfo.vertexBindingDescriptionCount = 1;

@@ -7,7 +7,7 @@ Vulkan::StartRenderPassCommand::StartRenderPassCommand(CommandBuffer &buffer, ui
                                                        const VkExtent2D &extent)
     : buffer{buffer}, imageIndex{imageIndex}, renderPass{renderPass}, frameBuffer{frameBuffer}, extent{extent} {}
 
-void Vulkan::StartRenderPassCommand::execute() const {
+void Vulkan::StartRenderPassCommand::enqueue() const {
   VkRenderPassBeginInfo renderPassInfo{};
   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
   renderPassInfo.renderPass = renderPass.getRenderPass();

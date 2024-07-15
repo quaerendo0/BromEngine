@@ -5,6 +5,6 @@ class ICommand {
 public:
   ICommand() {}
   virtual ~ICommand() {}
-  virtual void execute() const = 0;
+  virtual void enqueue() const = 0;
 };
 } // namespace Vulkan

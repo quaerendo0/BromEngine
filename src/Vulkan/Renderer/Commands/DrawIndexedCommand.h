@@ -2,28 +2,28 @@
 
 #include "vulkan/vulkan.h"
 
-#include "../Buffers/DeviceInternalBuffer.h"
+#include "../Buffers/IndexBuffer.h"
+#include "../Buffers/VertexBuffer.h"
 #include "../CommandBuffer.h"
 #include "ICommand.h"
 
 namespace Vulkan {
 class DrawIndexedCommand : public ICommand {
 public:
-  DrawIndexedCommand(CommandBuffer &buffer, const DeviceInternalBuffer &vertexBuffer,
-                     const DeviceInternalBuffer &indexBuffer)
-      : vertexBuffer{vertexBuffer}, buffer{buffer}, indexBuffer{indexBuffer} {};
+  DrawIndexedCommand(CommandBuffer &buffer, const VertexBuffer &vertexBuffer, const IndexBuffer &indexBuffer)
+      : buffer{buffer}, vertexBuffer{vertexBuffer}, indexBuffer{indexBuffer} {};
 
-  void execute() const override {
+  void enqueue() const override {
     VkBuffer vertexBuffers[] = {vertexBuffer.getBufferHandle()};
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(buffer.getBuffer(), 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(buffer.getBuffer(), indexBuffer.getBufferHandle(), 0, VK_INDEX_TYPE_UINT16);
-    vkCmdDrawIndexed(buffer.getBuffer(), static_cast<uint32_t>(indexBuffer.elementCount()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(buffer.getBuffer(), static_cast<uint32_t>(indexBuffer.getElementsCount()), 1, 0, 0, 0);
   };
 
 private:
-  const DeviceInternalBuffer &vertexBuffer;
-  const DeviceInternalBuffer &indexBuffer;
   CommandBuffer &buffer;
+  const VertexBuffer &vertexBuffer;
+  const IndexBuffer &indexBuffer;
 };
 } // namespace Vulkan

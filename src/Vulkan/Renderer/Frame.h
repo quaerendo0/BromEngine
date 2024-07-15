@@ -1,6 +1,7 @@
 #pragma once
 
-#include "./Buffers/DeviceInternalBuffer.h"
+#include "./Buffers/IndexBuffer.h"
+#include "./Buffers/VertexBuffer.h"
 #include "CommandBuffer.h"
 #include "vulkan/vulkan_core.h"
 
@@ -11,7 +12,7 @@ public:
   Frame(const LogicalDevice &device, SwapChain *swapChain, FrameBuffer *frameBuffer, const CommandPool &pool);
   ~Frame();
   DrawStatus drawIndexed(const RenderPass &pass, const GraphicsPipeline &graphicsPipeline,
-                         const DeviceInternalBuffer &vertexBuffer, const DeviceInternalBuffer &indexBuffer,
+                         const VertexBuffer &vertexBuffer, const IndexBuffer &indexBuffer,
                          const VkDescriptorSet &descriptorSet);
 
   void swapChainBuffer(SwapChain *chain, FrameBuffer *fBuffer);

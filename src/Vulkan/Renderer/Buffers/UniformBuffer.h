@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../UniformBufferObject.h"
-#include "AbstractBuffer.h"
+#include "BasicBuffer.h"
 
 namespace Vulkan {
-class UniformBuffer : public AbstractBuffer {
+class UniformBuffer : public BasicBuffer {
 public:
   UniformBuffer(const LogicalDevice &device);
   virtual ~UniformBuffer();

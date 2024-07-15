@@ -2,8 +2,6 @@
 
 #include "../LogicalDevice.h"
 
-#include "./Buffers/DeviceInternalBuffer.h"
-#include "./Buffers/StagingBuffer.h"
 #include "./Buffers/UniformBuffer.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
@@ -39,8 +37,6 @@ private:
   DescriptorManager *descriptorManager = nullptr;
 
   std::vector<UniformBuffer *> uniformBuffers;
-  DeviceInternalBuffer *vertexBuffer = nullptr;
-  DeviceInternalBuffer *indexBuffer = nullptr;
 
   CommandPool *commandPool;
 
