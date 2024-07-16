@@ -31,8 +31,7 @@ void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &exte
   std::vector<glm::mat4> perModelTransforms;
   for (size_t i = 0; i < modelPositions.size(); i++) {
     const auto &pos = modelPositions.at(i);
-    perModelTransforms.push_back(glm::translate(
-        glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f)), {pos.X, pos.Y, pos.Z}));
+    perModelTransforms.push_back(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
   }
 
   mvpPerModel.model = perModelTransforms.data();
