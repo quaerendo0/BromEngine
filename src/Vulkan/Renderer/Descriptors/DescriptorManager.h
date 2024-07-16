@@ -2,8 +2,8 @@
 
 #include "vulkan/vulkan.h"
 
-#include "../LogicalDevice.h"
-#include "Buffers/UniformBuffer.h"
+#include "../../LogicalDevice.h"
+#include "../Buffers/UniformBuffer.h"
 #include "DescriptorSetLayout.h"
 
 namespace Vulkan {

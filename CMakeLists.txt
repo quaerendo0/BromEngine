@@ -37,14 +37,6 @@ add_executable(${PROJECT_NAME}
 ./src/Vulkan/SwapChainSupportDetails.h
 ./src/Vulkan/Window.cpp
 ./src/Vulkan/Window.h
-./src/Vulkan/Renderer/CommandBuffer.cpp
-./src/Vulkan/Renderer/CommandBuffer.h
-./src/Vulkan/Renderer/CommandPool.cpp
-./src/Vulkan/Renderer/CommandPool.h
-./src/Vulkan/Renderer/DescriptorManager.cpp
-./src/Vulkan/Renderer/DescriptorManager.h
-./src/Vulkan/Renderer/DescriptorSetLayout.cpp
-./src/Vulkan/Renderer/DescriptorSetLayout.h
 ./src/Vulkan/Renderer/Frame.cpp
 ./src/Vulkan/Renderer/Frame.h
 ./src/Vulkan/Renderer/FrameBuffer.cpp
@@ -74,6 +66,10 @@ add_executable(${PROJECT_NAME}
 ./src/Vulkan/Renderer/Commands/BindCommandBufferToPipelineCommand.h
 ./src/Vulkan/Renderer/Commands/BindDescriptorSetCommand.cpp
 ./src/Vulkan/Renderer/Commands/BindDescriptorSetCommand.h
+./src/Vulkan/Renderer/Commands/CommandBuffer.cpp
+./src/Vulkan/Renderer/Commands/CommandBuffer.h
+./src/Vulkan/Renderer/Commands/CommandPool.cpp
+./src/Vulkan/Renderer/Commands/CommandPool.h
 ./src/Vulkan/Renderer/Commands/CopyBufferCommand.cpp
 ./src/Vulkan/Renderer/Commands/CopyBufferCommand.h
 ./src/Vulkan/Renderer/Commands/DrawCommand.h
@@ -85,6 +81,10 @@ add_executable(${PROJECT_NAME}
 ./src/Vulkan/Renderer/Commands/StartRenderPassCommand.h
 ./src/Vulkan/Renderer/Commands/StopRenderPassCommand.cpp
 ./src/Vulkan/Renderer/Commands/StopRenderPassCommand.h
+./src/Vulkan/Renderer/Descriptors/DescriptorManager.cpp
+./src/Vulkan/Renderer/Descriptors/DescriptorManager.h
+./src/Vulkan/Renderer/Descriptors/DescriptorSetLayout.cpp
+./src/Vulkan/Renderer/Descriptors/DescriptorSetLayout.h
 
 
 )

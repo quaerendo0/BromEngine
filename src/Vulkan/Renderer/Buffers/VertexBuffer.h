@@ -2,7 +2,7 @@
 
 #include "../../../Game/Geometry/Vertex.h"
 #include "../../LogicalDevice.h"
-#include "../CommandPool.h"
+#include "../Commands/CommandPool.h"
 #include "BasicBuffer.h"
 #include <vector>
 

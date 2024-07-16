@@ -5,7 +5,7 @@
 Vulkan::StartRenderPassCommand::StartRenderPassCommand(CommandBuffer &buffer, uint32_t imageIndex,
                                                        const RenderPass &renderPass, const FrameBuffer &frameBuffer,
                                                        const VkExtent2D &extent)
-    : buffer{buffer}, imageIndex{imageIndex}, renderPass{renderPass}, frameBuffer{frameBuffer}, extent{extent} {}
+    : imageIndex{imageIndex}, renderPass{renderPass}, frameBuffer{frameBuffer}, extent{extent}, buffer{buffer} {}
 
 void Vulkan::StartRenderPassCommand::enqueue() const {
   VkRenderPassBeginInfo renderPassInfo{};

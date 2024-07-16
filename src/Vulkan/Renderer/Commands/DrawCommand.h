@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Buffers/VertexBuffer.h"
-#include "../CommandBuffer.h"
+#include "CommandBuffer.h"
 #include "ICommand.h"
 
 namespace Vulkan {

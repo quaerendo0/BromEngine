@@ -4,10 +4,10 @@
 
 #include "vulkan/vulkan.h"
 
-#include "../LogicalDevice.h"
-#include "FrameBuffer.h"
-#include "GraphicsPipeline.h"
-#include "RenderPass.h"
+#include "../../LogicalDevice.h"
+#include "../FrameBuffer.h"
+#include "../GraphicsPipeline.h"
+#include "../RenderPass.h"
 
 namespace Vulkan {
 class CommandPool {

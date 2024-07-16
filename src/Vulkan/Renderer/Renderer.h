@@ -2,10 +2,10 @@
 
 #include "../LogicalDevice.h"
 
-#include "./Buffers/UniformBuffer.h"
-#include "CommandBuffer.h"
-#include "CommandPool.h"
-#include "DescriptorManager.h"
+#include "Buffers/UniformBuffer.h"
+#include "Commands/CommandBuffer.h"
+#include "Commands/CommandPool.h"
+#include "Descriptors/DescriptorManager.h"
 #include "Frame.h"
 #include "FrameBuffer.h"
 #include "GraphicsPipeline.h"

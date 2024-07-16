@@ -4,7 +4,7 @@
 
 Vulkan::BindCommandBufferToPipelineCommand::BindCommandBufferToPipelineCommand(CommandBuffer &buffer,
                                                                                const GraphicsPipeline &pipeline)
-    : buffer{buffer}, pipeline{pipeline} {}
+    : pipeline{pipeline}, buffer{buffer} {}
 
 void Vulkan::BindCommandBufferToPipelineCommand::enqueue() const {
   vkCmdBindPipeline(buffer.getBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipeline());

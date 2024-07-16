@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../CommandBuffer.h"
 #include "../GraphicsPipeline.h"
+#include "CommandBuffer.h"
 #include "ICommand.h"
+
 
 namespace Vulkan {
 

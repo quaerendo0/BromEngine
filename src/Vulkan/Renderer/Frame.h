@@ -2,7 +2,7 @@
 
 #include "./Buffers/IndexBuffer.h"
 #include "./Buffers/VertexBuffer.h"
-#include "CommandBuffer.h"
+#include "Commands/CommandBuffer.h"
 #include "vulkan/vulkan_core.h"
 
 namespace Vulkan {

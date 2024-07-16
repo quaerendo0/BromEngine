@@ -3,7 +3,7 @@
 namespace Vulkan {
 BindDescriptorSetCommand::BindDescriptorSetCommand(CommandBuffer &buffer, const GraphicsPipeline &graphicsPipeline,
                                                    const VkDescriptorSet &descriptorSet)
-    : buffer{buffer}, graphicsPipeline{graphicsPipeline}, descriptorSet{descriptorSet} {}
+    : graphicsPipeline{graphicsPipeline}, descriptorSet{descriptorSet}, buffer{buffer} {}
 
 void BindDescriptorSetCommand::enqueue() const {
   vkCmdBindDescriptorSets(buffer.getBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getPipelineLayout(), 0,

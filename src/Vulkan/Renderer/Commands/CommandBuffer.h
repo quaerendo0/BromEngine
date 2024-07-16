@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../LogicalDevice.h"
+#include "../../LogicalDevice.h"
 #include "vulkan/vulkan.h"
 
-#include "./Commands/ICommand.h"
 #include "CommandPool.h"
+#include "ICommand.h"
 
 namespace Vulkan {
 class CommandBuffer {

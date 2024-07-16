@@ -1,5 +1,5 @@
 #include "VertexBuffer.h"
-#include "../CommandBuffer.h"
+#include "../Commands/CommandBuffer.h"
 #include "../Commands/CopyBufferCommand.h"
 
 Vulkan::VertexBuffer::VertexBuffer(const LogicalDevice &device,

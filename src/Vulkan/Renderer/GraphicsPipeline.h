@@ -6,7 +6,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include "../LogicalDevice.h"
-#include "DescriptorSetLayout.h"
+#include "Descriptors/DescriptorSetLayout.h"
 #include "RenderPass.h"
 #include "SwapChain.h"
 

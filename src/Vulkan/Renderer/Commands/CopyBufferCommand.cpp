@@ -2,7 +2,7 @@
 
 Vulkan::CopyBufferCommand::CopyBufferCommand(CommandBuffer &buffer, const BasicBuffer &srcBuffer,
                                              const BasicBuffer &trgtBuffer)
-    : buffer{buffer}, srcBuffer{srcBuffer}, trgtBuffer{trgtBuffer} {}
+    : srcBuffer{srcBuffer}, trgtBuffer{trgtBuffer}, buffer{buffer} {}
 
 void Vulkan::CopyBufferCommand::enqueue() const {
   VkBufferCopy copyRegion{};

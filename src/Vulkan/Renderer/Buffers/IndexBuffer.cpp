@@ -1,5 +1,5 @@
 #include "IndexBuffer.h"
-#include "../CommandBuffer.h"
+#include "../Commands/CommandBuffer.h"
 #include "../Commands/CopyBufferCommand.h"
 #include "../Commands/ICommand.h"
 
