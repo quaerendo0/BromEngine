@@ -6,14 +6,21 @@
 #include "vulkan/vulkan_core.h"
 
 namespace Vulkan {
+
+struct Cheburator {
+  VertexBuffer *vertexBuffer;
+  IndexBuffer *indexBuffer;
+  VkDescriptorSet descriptorSet;
+  std::vector<uint32_t> offsets;
+};
+
 enum DrawStatus { ok, fucked };
 class Frame {
 public:
   Frame(const LogicalDevice &device, SwapChain *swapChain, FrameBuffer *frameBuffer, const CommandPool &pool);
   ~Frame();
   DrawStatus drawIndexed(const RenderPass &pass, const GraphicsPipeline &graphicsPipeline,
-                         const VertexBuffer &vertexBuffer, const IndexBuffer &indexBuffer,
-                         const VkDescriptorSet &descriptorSet);
+                         const std::vector<Cheburator> &chebureks);
 
   void swapChainBuffer(SwapChain *chain, FrameBuffer *fBuffer);
 

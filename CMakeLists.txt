@@ -83,6 +83,7 @@ add_executable(${PROJECT_NAME}
 ./src/Vulkan/Renderer/Commands/StopRenderPassCommand.h
 ./src/Vulkan/Renderer/Descriptors/DescriptorManager.cpp
 ./src/Vulkan/Renderer/Descriptors/DescriptorManager.h
+./src/Vulkan/Renderer/Descriptors/DescriptorsData.h
 ./src/Vulkan/Renderer/Descriptors/DescriptorSetLayout.cpp
 ./src/Vulkan/Renderer/Descriptors/DescriptorSetLayout.h
 

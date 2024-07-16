@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace Vulkan {
-class BasicBuffer : IBuffer {
+class BasicBuffer : public IBuffer {
 public:
   BasicBuffer(const LogicalDevice &device, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
               VkDeviceSize size);

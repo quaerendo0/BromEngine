@@ -6,7 +6,7 @@
 namespace Vulkan {
 class UniformBuffer : public BasicBuffer {
 public:
-  UniformBuffer(const LogicalDevice &device);
+  UniformBuffer(const LogicalDevice &device, VkDeviceSize size);
   virtual ~UniformBuffer();
 
   void acquireData(const void *srcData) const;

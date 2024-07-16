@@ -31,8 +31,7 @@ Frame::~Frame() {
 }
 
 DrawStatus Frame::drawIndexed(const RenderPass &pass, const GraphicsPipeline &graphicsPipeline,
-                              const VertexBuffer &vertexBuffer, const IndexBuffer &indexBuffer,
-                              const VkDescriptorSet &descriptorSet) {
+                              const std::vector<Cheburator> &chebureks) {
   const auto d = device.getDevicePtr();
   vkWaitForFences(d, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
 
@@ -54,8 +53,14 @@ DrawStatus Frame::drawIndexed(const RenderPass &pass, const GraphicsPipeline &gr
   commands.push_back(std::make_unique<BindCommandBufferToPipelineCommand>(frameCommandBuffer, graphicsPipeline));
   commands.push_back(
       std::make_unique<SetupViewportScissorCommand>(frameCommandBuffer, swapChain->getSwapChainExtent()));
-  commands.push_back(std::make_unique<BindDescriptorSetCommand>(frameCommandBuffer, graphicsPipeline, descriptorSet));
-  commands.push_back(std::make_unique<DrawIndexedCommand>(frameCommandBuffer, vertexBuffer, indexBuffer));
+
+  for (auto &cheburek : chebureks) {
+    commands.push_back(std::make_unique<BindDescriptorSetCommand>(frameCommandBuffer, graphicsPipeline,
+                                                                  cheburek.descriptorSet, cheburek.offsets));
+    commands.push_back(
+        std::make_unique<DrawIndexedCommand>(frameCommandBuffer, *cheburek.vertexBuffer, *cheburek.indexBuffer));
+  }
+
   commands.push_back(std::make_unique<StopRenderPassCommand>(frameCommandBuffer));
   frameCommandBuffer.recordCommandBuffer(commands);
 

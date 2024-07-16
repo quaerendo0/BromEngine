@@ -2,10 +2,11 @@
 
 #include "../LogicalDevice.h"
 
+#include "../../Game/Scene.h"
 #include "Buffers/UniformBuffer.h"
 #include "Commands/CommandBuffer.h"
 #include "Commands/CommandPool.h"
-#include "Descriptors/DescriptorManager.h"
+#include "Descriptors/DescriptorsData.h"
 #include "Frame.h"
 #include "FrameBuffer.h"
 #include "GraphicsPipeline.h"
@@ -15,7 +16,9 @@
 namespace Vulkan {
 class Renderer {
 public:
-  Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger);
+  void initBuffer(const BromEngine::Scene &scene, const VkExtent2D &extent);
+  Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger,
+           const BromEngine::Scene &scene);
   ~Renderer();
 
   void cleanupSwapChain();
@@ -29,16 +32,23 @@ private:
   GLFWwindow *window;
   const Log::ILogger &logger;
 
-  SwapChain *swapChain = nullptr;
-  RenderPass *renderPass = nullptr;
-  DescriptorSetLayout *descriptorSetLayout = nullptr;
-  GraphicsPipeline *graphicsPipeline = nullptr;
-  FrameBuffer *frameBuffer = nullptr;
-  DescriptorManager *descriptorManager = nullptr;
+  std::unique_ptr<SwapChain> swapChain = nullptr;
+  std::unique_ptr<RenderPass> renderPass = nullptr;
+  std::unique_ptr<GraphicsPipeline> graphicsPipeline = nullptr;
+  std::unique_ptr<FrameBuffer> frameBuffer = nullptr;
+  std::unique_ptr<CommandPool> commandPool;
 
-  std::vector<UniformBuffer *> uniformBuffers;
+  std::unique_ptr<UniformBuffer> mvpBuffer;
+  std::unique_ptr<UniformBuffer> mvpPeModelBuffer;
 
-  CommandPool *commandPool;
+  std::vector<std::unique_ptr<VertexBuffer>> vertexBuffers;
+  std::vector<std::unique_ptr<IndexBuffer>> indexBuffers;
+  std::unique_ptr<DescriptorSetMeme> descriptorSetMeme = nullptr;
+
+  std::vector<Cheburator> chebureks;
+
+  Mvp mvp;
+  MvpPerModel mvpPerModel;
 
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
   uint32_t currentFrame = 0;

@@ -23,8 +23,10 @@ Vulkan::Window::Window(int w, int h, const Log::ILogger &logger) : width{w}, hei
   surface = new Surface{instance->getInstancePtr(), window};
   physicalDevice = new PhysicalDevice{instance->getInstancePtr(), surface->getSurface(), logger};
   logicalDevice = new LogicalDevice{*physicalDevice, Instance::validationLayers, enableValidationLayers};
+
+  scene = std::make_unique<BromEngine::Scene>();
   // move to logical device?
-  renderer = new Renderer{*logicalDevice, *surface, window, logger};
+  renderer = new Renderer{*logicalDevice, *surface, window, logger, *scene};
 }
 
 Vulkan::Window::~Window() {

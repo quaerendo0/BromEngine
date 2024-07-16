@@ -1,4 +1,12 @@
 #include "Renderer.h"
+
+#include <algorithm>
+#include <chrono>
+#include <glm/gtx/transform.hpp>
+
+#include "glm/glm.hpp"
+
+#include "../../Game/Scene.h"
 #include "Commands/BindCommandBufferToPipelineCommand.h"
 #include "Commands/CopyBufferCommand.h"
 #include "Commands/DrawCommand.h"
@@ -6,74 +14,72 @@
 #include "Commands/SetupViewportScissorCommand.h"
 #include "Commands/StartRenderPassCommand.h"
 #include "Commands/StopRenderPassCommand.h"
-#include "glm/glm.hpp"
-#include <algorithm>
-#include <chrono>
-#include <glm/gtx/transform.hpp>
+#include "Descriptors/DescriptorsData.h"
 
 namespace Vulkan {
 
-void updateUniformBuffer(uint32_t currentImage, const VkExtent2D &extent, const UniformBuffer &uniformBuffer) {
-  static auto startTime = std::chrono::high_resolution_clock::now();
+void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &extent) {
+  const auto &c = scene.getCamera();
+  const auto modelPositions = scene.getModels();
+  mvp.view = glm::lookAt(c.eyeLocation, c.looksAt, c.up);
+  mvp.projection = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
+  mvp.projection[1][1] *= -1;
 
-  auto currentTime = std::chrono::high_resolution_clock::now();
-  float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+  mvpBuffer = std::make_unique<UniformBuffer>(device, sizeof(Mvp::projection) + sizeof(Mvp::view));
+  mvpBuffer->acquireData(&mvp);
 
-  UniformBufferObject ubo{};
-  ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.proj = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
-  ubo.proj[1][1] *= -1;
-  ubo.displace = glm::vec2(time * 0.5f, -time * 0.5f);
-  uniformBuffer.acquireData(&ubo);
+  std::vector<glm::mat4> perModelTransforms;
+  for (size_t i = 0; i < modelPositions.size(); i++) {
+    const auto &pos = modelPositions.at(i);
+    perModelTransforms.push_back(glm::translate(
+        glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f)), {pos.X, pos.Y, pos.Z}));
+  }
+
+  mvpPerModel.model = perModelTransforms.data();
+  mvpPeModelBuffer = std::make_unique<UniformBuffer>(device, sizeof(*MvpPerModel::model) * modelPositions.size());
+  mvpPeModelBuffer->acquireData(&mvpPerModel);
 }
 
-Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger)
+Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger,
+                   const BromEngine::Scene &scene)
     : device{device}, surface{surface}, window{window}, logger{logger} {
 
-  swapChain = new SwapChain{device, surface, window, logger};
-  renderPass = new RenderPass{swapChain->getSwapChainImageFormat(), device};
+  swapChain = std::make_unique<SwapChain>(device, surface, window, logger);
+  renderPass = std::make_unique<RenderPass>(swapChain->getSwapChainImageFormat(), device);
+  commandPool = std::make_unique<CommandPool>(device);
   const auto &extent = swapChain->getSwapChainExtent();
-  descriptorSetLayout = new DescriptorSetLayout{device};
-  graphicsPipeline = new GraphicsPipeline{device, extent, *descriptorSetLayout, *renderPass};
-  frameBuffer = new FrameBuffer{*swapChain, *renderPass, device};
-  commandPool = new CommandPool{device};
 
-  UniformBufferObject ubo{};
-  ubo.model = glm::rotate(glm::mat4(1.0f), 3 * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.proj = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
-  ubo.displace = glm::vec2(0.0f, 0.0f);
-  ubo.proj[1][1] *= -1;
+  initBuffer(scene, extent);
 
-  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-    uniformBuffers.push_back(new UniformBuffer{device});
-    uniformBuffers[i]->acquireData(&ubo);
+  descriptorSetMeme =
+      std::make_unique<DescriptorSetMeme>(device, scene.getModels().size(), *mvpBuffer, *mvpPeModelBuffer);
+  graphicsPipeline =
+      std::make_unique<GraphicsPipeline>(device, extent, descriptorSetMeme->getDescriptorSetLayouts(), *renderPass);
+  frameBuffer = std::make_unique<FrameBuffer>(*swapChain, *renderPass, device);
+
+  for (size_t i = 0; i < scene.getModels().size(); i++) {
+    std::vector<uint32_t> sus;
+    sus.push_back(i * sizeof(*MvpPerModel::model));
+
+    const auto &v = scene.getModels().at(i).getVertices();
+    vertexBuffers.push_back(std::make_unique<VertexBuffer>(device, v, *commandPool));
+    const auto &ind = scene.getModels().at(i).getIndices();
+    indexBuffers.push_back(std::make_unique<IndexBuffer>(device, ind, *commandPool));
+
+    chebureks.push_back(
+        {vertexBuffers.at(i).get(), indexBuffers.at(i).get(), descriptorSetMeme->getDescriptorSets().at(0), sus});
   }
 
-  descriptorManager = new DescriptorManager{device, *descriptorSetLayout, uniformBuffers};
-
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-    frames.push_back(std::make_unique<Frame>(device, swapChain, frameBuffer, *commandPool));
+    frames.push_back(std::make_unique<Frame>(device, swapChain.get(), frameBuffer.get(), *commandPool));
   }
 }
 
-Renderer::~Renderer() {
-  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-    delete uniformBuffers[i];
-  }
-
-  delete descriptorManager;
-  delete commandPool;
-  cleanupSwapChain();
-  delete graphicsPipeline;
-  delete descriptorSetLayout;
-  delete renderPass;
-}
+Renderer::~Renderer() {}
 
 void Renderer::cleanupSwapChain() {
-  delete frameBuffer;
-  delete swapChain;
+  frameBuffer.reset();
+  swapChain.reset();
 }
 
 void Renderer::recreateSwapChain() {
@@ -86,23 +92,21 @@ void Renderer::recreateSwapChain() {
 
   vkDeviceWaitIdle(device.getDevicePtr());
   cleanupSwapChain();
-  swapChain = new SwapChain{device, surface, window, logger};
-  frameBuffer = new FrameBuffer{*swapChain, *renderPass, device};
+  swapChain.reset(new SwapChain{device, surface, window, logger});
+  frameBuffer.reset(new FrameBuffer{*swapChain, *renderPass, device});
 }
 
 void Renderer::drawFrame() {
   auto &frame = frames.at(currentFrame);
-  updateUniformBuffer(currentFrame, swapChain->getSwapChainExtent(), *uniformBuffers.at(currentFrame));
-  /*
-  const auto result = frame->drawIndexed(*renderPass, *graphicsPipeline, *vertexBuffer, *indexBuffer,
-                                         descriptorManager->getDescriptorSets().at(currentFrame));
+
+  const auto result = frame->drawIndexed(*renderPass, *graphicsPipeline, chebureks);
   if (result == DrawStatus::fucked || framebufferResized) {
     framebufferResized = false;
     recreateSwapChain();
-    auto sc = swapChain;
-    auto fb = frameBuffer;
+    auto sc = swapChain.get();
+    auto fb = frameBuffer.get();
     std::for_each(frames.begin(), frames.end(), [sc, fb](auto &f) { f->swapChainBuffer(sc, fb); });
-  }*/
+  }
 
   currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }

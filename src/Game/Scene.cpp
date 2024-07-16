@@ -15,7 +15,7 @@ Scene::Scene() {
   models[0].X = -1.0f;
   models[0].Y = -1.0f;
 
-  models[1].X = 1.0f;
-  models[1].Y = 1.0f;
+  models[1].X = 0.0f;
+  models[1].Y = 0.0f;
 };
 } // namespace BromEngine

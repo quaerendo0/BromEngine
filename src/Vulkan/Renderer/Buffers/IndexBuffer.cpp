@@ -16,8 +16,8 @@ Vulkan::IndexBuffer::IndexBuffer(const LogicalDevice &device, const std::vector<
   vkUnmapMemory(device.getDevicePtr(), stagingBuffer->getBufferMemoryHandle());
 
   inMemoryBuffer =
-      std::make_unique<BasicBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, size);
+      std::make_unique<BasicBuffer>(device, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size);
 
   CommandBuffer tempCopyCommandBuffer{device, commandPool};
   std::vector<std::unique_ptr<ICommand>> commands{};
