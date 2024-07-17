@@ -120,7 +120,6 @@ private:
     bufferInfo.buffer = buffer.getBufferHandle();
     bufferInfo.offset = 0;
     bufferInfo.range = sizeof(Mvp::projection) + sizeof(Mvp::view);
-
     VkWriteDescriptorSet descriptorWrite{};
     descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrite.dstSet = descriptorSets[0];

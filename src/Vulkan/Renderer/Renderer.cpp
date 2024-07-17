@@ -36,7 +36,10 @@ void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &exte
 
   mvpPerModel.model = perModelTransforms.data();
   mvpPeModelBuffer = std::make_unique<UniformBuffer>(device, sizeof(*MvpPerModel::model) * modelPositions.size());
-  mvpPeModelBuffer->acquireData(&mvpPerModel);
+
+  auto a = new MvpPerModel{};
+  a->model = new glm::mat4{glm::rotate(glm::mat4(1.0f), 1 * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f))};
+  mvpPeModelBuffer->acquireData(a->model);
 }
 
 Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger,
