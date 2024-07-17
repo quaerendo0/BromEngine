@@ -4,10 +4,10 @@ project(BromEngine)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(${PROJECT_NAME}
-
 ./src/App.cpp
 ./src/App.h
 ./src/main.cpp
+./src/tutorial.cpp
 ./src/Game/Camera.h
 ./src/Game/Model3d.cpp
 ./src/Game/Model3d.h
