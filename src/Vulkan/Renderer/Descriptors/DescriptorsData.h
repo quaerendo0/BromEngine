@@ -15,7 +15,7 @@ struct Mvp {
 };
 
 struct MvpPerModel {
-  glm::mat4 *model; // glm::translate * glm::rotate
+  glm::mat4 model; // glm::translate * glm::rotate
 };
 
 class DescriptorSetMeme {
@@ -134,7 +134,7 @@ private:
     VkDescriptorBufferInfo bufferInfo2{};
     bufferInfo2.buffer = buffer2.getBufferHandle();
     bufferInfo2.offset = 0;
-    bufferInfo2.range = sizeof(*MvpPerModel::model);
+    bufferInfo2.range = sizeof(MvpPerModel);
 
     VkWriteDescriptorSet descriptorWrite2{};
     descriptorWrite2.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

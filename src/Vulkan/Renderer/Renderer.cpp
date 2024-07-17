@@ -28,18 +28,17 @@ void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &exte
   mvpBuffer = std::make_unique<UniformBuffer>(device, sizeof(Mvp::projection) + sizeof(Mvp::view));
   mvpBuffer->acquireData(&mvp);
 
-  std::vector<glm::mat4> perModelTransforms;
+  std::vector<MvpPerModel> perModelTransforms;
   for (size_t i = 0; i < modelPositions.size(); i++) {
     const auto &pos = modelPositions.at(i);
-    perModelTransforms.push_back(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+    MvpPerModel sus{};
+    sus.model = glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+                               {pos.X, pos.Y, pos.Z});
+    perModelTransforms.push_back(sus);
   }
 
-  mvpPerModel.model = perModelTransforms.data();
-  mvpPeModelBuffer = std::make_unique<UniformBuffer>(device, sizeof(*MvpPerModel::model) * modelPositions.size());
-
-  auto a = new MvpPerModel{};
-  a->model = new glm::mat4{glm::rotate(glm::mat4(1.0f), 1 * glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f))};
-  mvpPeModelBuffer->acquireData(a->model);
+  mvpPeModelBuffer = std::make_unique<UniformBuffer>(device, sizeof(MvpPerModel) * modelPositions.size());
+  mvpPeModelBuffer->acquireData(perModelTransforms.data());
 }
 
 Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger,
@@ -61,7 +60,7 @@ Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwind
 
   for (size_t i = 0; i < scene.getModels().size(); i++) {
     std::vector<uint32_t> sus;
-    sus.push_back(i * sizeof(*MvpPerModel::model));
+    sus.push_back(i * sizeof(MvpPerModel));
 
     const auto &v = scene.getModels().at(i).getVertices();
     vertexBuffers.push_back(std::make_unique<VertexBuffer>(device, v, *commandPool));
