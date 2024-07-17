@@ -32,8 +32,9 @@ void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &exte
   for (size_t i = 0; i < modelPositions.size(); i++) {
     const auto &pos = modelPositions.at(i);
     MvpPerModel sus{};
-    sus.model = glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
-                               {pos.X, pos.Y, pos.Z});
+    const auto rot = glm::rotate(glm::mat4(1.0f), 0 * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    const auto trans = glm::translate(glm::mat4(1.0f), {pos.X, pos.Y, pos.Z});
+    sus.model = trans * rot;
     perModelTransforms.push_back(sus);
   }
 
@@ -43,7 +44,7 @@ void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &exte
 
 Renderer::Renderer(const LogicalDevice &device, const Surface &surface, GLFWwindow *window, const Log::ILogger &logger,
                    const BromEngine::Scene &scene)
-    : device{device}, surface{surface}, window{window}, logger{logger} {
+    : device{device}, surface{surface}, window{window}, logger{logger}, scene{scene} {
 
   swapChain = std::make_unique<SwapChain>(device, surface, window, logger);
   renderPass = std::make_unique<RenderPass>(swapChain->getSwapChainImageFormat(), device);
@@ -98,6 +99,27 @@ void Renderer::recreateSwapChain() {
 }
 
 void Renderer::drawFrame() {
+
+  static auto startTime = std::chrono::high_resolution_clock::now();
+
+  if (currentFrame == 0) {
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+    std::vector<MvpPerModel> perModelTransforms;
+    for (size_t i = 0; i < scene.getModels().size(); i++) {
+      const auto &pos = scene.getModels().at(i);
+      MvpPerModel sus{};
+      const auto rot = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+      const auto trans = glm::translate(glm::mat4(1.0f), {pos.X, pos.Y, pos.Z});
+      sus.model = trans * rot;
+      perModelTransforms.push_back(sus);
+    }
+
+    mvpPeModelBuffer->acquireData(perModelTransforms.data());
+  }
+
   auto &frame = frames.at(currentFrame);
 
   const auto result = frame->drawIndexed(*renderPass, *graphicsPipeline, chebureks);

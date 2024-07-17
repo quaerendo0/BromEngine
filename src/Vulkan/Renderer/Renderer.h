@@ -29,6 +29,7 @@ public:
 private:
   const LogicalDevice &device;
   const Surface &surface;
+  const BromEngine::Scene &scene;
   GLFWwindow *window;
   const Log::ILogger &logger;
 
