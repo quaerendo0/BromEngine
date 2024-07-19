@@ -6,6 +6,7 @@
 
 #include "glm/glm.hpp"
 
+#include "../../Game/Geometry/SpaceSettings.h"
 #include "../../Game/Scene.h"
 #include "Commands/BindCommandBufferToPipelineCommand.h"
 #include "Commands/CopyBufferCommand.h"
@@ -18,6 +19,35 @@
 
 namespace Vulkan {
 
+std::vector<MvpPerModel> getPerModelTransforms(const std::vector<BromEngine::Model3d> &models) {
+  // rotate/translate models each frame based on their XYZ and rotations
+  std::vector<MvpPerModel> perModelTransforms;
+  for (size_t i = 0; i < models.size(); i++) {
+    const auto &model = models.at(i);
+    MvpPerModel transformationPerModel{};
+    // align front
+    const auto rotFrontAngle =
+        glm::acos(glm::dot(model.frontNormalized, BromEngine::Geometry::GlobalSpaceSettings::Front));
+
+    const auto rotFrontVector =
+        rotFrontAngle < 0.001f ? BromEngine::Geometry::GlobalSpaceSettings::Up
+                               : glm::cross(model.frontNormalized, BromEngine::Geometry::GlobalSpaceSettings::Front);
+    const auto rotFront = glm::rotate(glm::mat4(1.0f), rotFrontAngle, rotFrontVector);
+
+    const auto rotUpAngle = glm::acos(glm::dot(model.upNormalized, BromEngine::Geometry::GlobalSpaceSettings::Up));
+    const auto rotUpVector = rotUpAngle < 0.001f
+                                 ? BromEngine::Geometry::GlobalSpaceSettings::Front
+                                 : glm::cross(model.upNormalized, BromEngine::Geometry::GlobalSpaceSettings::Up);
+    const auto rotUp = glm::rotate(glm::mat4(1.0f), rotUpAngle, rotUpVector);
+
+    const auto trans = glm::translate(glm::mat4(1.0f), {model.X, model.Y, model.Z});
+    transformationPerModel.model = trans * rotFront * rotUp;
+    perModelTransforms.push_back(transformationPerModel);
+  }
+
+  return perModelTransforms;
+}
+
 void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &extent) {
   const auto &c = scene.getCamera();
   const auto modelPositions = scene.getModels();
@@ -28,15 +58,7 @@ void Renderer::initBuffer(const BromEngine::Scene &scene, const VkExtent2D &exte
   mvpBuffer = std::make_unique<UniformBuffer>(device, sizeof(Mvp::projection) + sizeof(Mvp::view));
   mvpBuffer->acquireData(&mvp);
 
-  std::vector<MvpPerModel> perModelTransforms;
-  for (size_t i = 0; i < modelPositions.size(); i++) {
-    const auto &pos = modelPositions.at(i);
-    MvpPerModel sus{};
-    const auto rot = glm::rotate(glm::mat4(1.0f), 0 * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    const auto trans = glm::translate(glm::mat4(1.0f), {pos.X, pos.Y, pos.Z});
-    sus.model = trans * rot;
-    perModelTransforms.push_back(sus);
-  }
+  const auto &perModelTransforms = getPerModelTransforms(scene.getModels());
 
   mvpPeModelBuffer = std::make_unique<UniformBuffer>(device, sizeof(MvpPerModel) * modelPositions.size());
   mvpPeModelBuffer->acquireData(perModelTransforms.data());
@@ -100,23 +122,8 @@ void Renderer::recreateSwapChain() {
 
 void Renderer::drawFrame() {
 
-  static auto startTime = std::chrono::high_resolution_clock::now();
-
   if (currentFrame == 0) {
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-    std::vector<MvpPerModel> perModelTransforms;
-    for (size_t i = 0; i < scene.getModels().size(); i++) {
-      const auto &pos = scene.getModels().at(i);
-      MvpPerModel sus{};
-      const auto rot = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-      const auto trans = glm::translate(glm::mat4(1.0f), {pos.X, pos.Y, pos.Z});
-      sus.model = trans * rot;
-      perModelTransforms.push_back(sus);
-    }
-
+    const auto &perModelTransforms = getPerModelTransforms(scene.getModels());
     mvpPeModelBuffer->acquireData(perModelTransforms.data());
   }
 

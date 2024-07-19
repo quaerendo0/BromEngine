@@ -4,9 +4,9 @@ namespace BromEngine {
 void App::run() {
   while (!window.shouldClose()) {
     window.pollEvents();
-    window.drawFrame();
+    rendererApi.drawFrame();
   }
 
-  window.waitIdle();
+  rendererApi.waitIdle();
 }
 } // namespace BromEngine

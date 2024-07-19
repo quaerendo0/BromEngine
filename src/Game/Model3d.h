@@ -17,6 +17,9 @@ public:
   float Y = 0.0f;
   float Z = 0.0f;
 
+  glm::vec3 frontNormalized{1.0f, 0.0f, 0.0f};
+  glm::vec3 upNormalized{0.0f, 0.0f, 1.0f};
+
 private:
   std::vector<Geometry::Vertex> vertices;
   std::vector<uint16_t> indices;
