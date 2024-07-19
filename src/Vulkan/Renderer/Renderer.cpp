@@ -31,13 +31,13 @@ std::vector<MvpPerModel> getPerModelTransforms(const std::vector<BromEngine::Mod
 
     const auto rotFrontVector =
         rotFrontAngle < 0.001f ? BromEngine::Geometry::GlobalSpaceSettings::Up
-                               : glm::cross(model.frontNormalized, BromEngine::Geometry::GlobalSpaceSettings::Front);
+                               : glm::cross(BromEngine::Geometry::GlobalSpaceSettings::Front, model.frontNormalized);
     const auto rotFront = glm::rotate(glm::mat4(1.0f), rotFrontAngle, rotFrontVector);
 
     const auto rotUpAngle = glm::acos(glm::dot(model.upNormalized, BromEngine::Geometry::GlobalSpaceSettings::Up));
     const auto rotUpVector = rotUpAngle < 0.001f
                                  ? BromEngine::Geometry::GlobalSpaceSettings::Front
-                                 : glm::cross(model.upNormalized, BromEngine::Geometry::GlobalSpaceSettings::Up);
+                                 : glm::cross(BromEngine::Geometry::GlobalSpaceSettings::Up, model.upNormalized);
     const auto rotUp = glm::rotate(glm::mat4(1.0f), rotUpAngle, rotUpVector);
 
     const auto trans = glm::translate(glm::mat4(1.0f), {model.X, model.Y, model.Z});
