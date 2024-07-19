@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Game/Scene.h"
 #include "Logger/Logger.h"
-#include "Vulkan/Window.h"
+#include "Vulkan/VulkanApi.h"
+#include "Window.h"
 
 namespace BromEngine {
 
@@ -11,7 +13,9 @@ public:
 
 private:
   Log::Logger logger{};
-  Vulkan::Window window{800, 600, logger};
+  Window window{800, 600, logger};
+  BromEngine::Scene scene{};
+  Vulkan::VulkanApi rendererApi{window.getWindowPtr(), logger, scene};
 };
 
 } // namespace BromEngine

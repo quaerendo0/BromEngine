@@ -4,15 +4,18 @@ project(BromEngine)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(${PROJECT_NAME}
+
 ./src/App.cpp
 ./src/App.h
 ./src/main.cpp
-./src/tutorial.cpp
+./src/Window.cpp
+./src/Window.h
 ./src/Game/Camera.h
 ./src/Game/Model3d.cpp
 ./src/Game/Model3d.h
 ./src/Game/Scene.cpp
 ./src/Game/Scene.h
+./src/Game/Geometry/SpaceSettings.h
 ./src/Game/Geometry/Vertex.h
 ./src/Logger/ILogger.h
 ./src/Logger/Logger.cpp
@@ -35,8 +38,8 @@ add_executable(${PROJECT_NAME}
 ./src/Vulkan/Surface.cpp
 ./src/Vulkan/Surface.h
 ./src/Vulkan/SwapChainSupportDetails.h
-./src/Vulkan/Window.cpp
-./src/Vulkan/Window.h
+./src/Vulkan/VulkanApi.cpp
+./src/Vulkan/VulkanApi.h
 ./src/Vulkan/Renderer/Frame.cpp
 ./src/Vulkan/Renderer/Frame.h
 ./src/Vulkan/Renderer/FrameBuffer.cpp
@@ -86,7 +89,6 @@ add_executable(${PROJECT_NAME}
 ./src/Vulkan/Renderer/Descriptors/DescriptorsData.h
 ./src/Vulkan/Renderer/Descriptors/DescriptorSetLayout.cpp
 ./src/Vulkan/Renderer/Descriptors/DescriptorSetLayout.h
-
 
 )
 
