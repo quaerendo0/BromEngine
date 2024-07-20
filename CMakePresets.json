@@ -5,7 +5,6 @@
       "name": "brom-engine",
       "displayName": "BromEngine Windows x64 Debug",
       "generator": "Visual Studio 17 2022",
-      "toolset": "ClangCL",
       "binaryDir": "${sourceDir}/${presetName}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
